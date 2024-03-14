@@ -4,30 +4,150 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    // 외부 API의 엔드포인트 설정
-    const apiUrl =
-      "http://apis.data.go.kr/1160100/service/GetFinaStatInfoService_V2/getSummFinaStat_V2";
+    // 1. 주식현재가 시세 API
+    const apiUrl1 =
+      "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price";
 
-    // 요청 파라미터 설정
-    const params = {
-      numOfRows: 10,
-      pageNo: 3,
-      resultType: "json",
-      serviceKey:
-        "NLC+mtKFJc/p7FecSKRqhgjKLIIts8gXoiZ0oZDrFn0GJs4/iu1MevewttDuHRmIOfbdIhvMGx7Gcbl5dQXa5g==",
-      // crno: "1746110000741", // 법인등록번호
-      // 사업연도
+    const queryParameters1 = new URLSearchParams({
+      FID_COND_MRKT_DIV_CODE: "J",
+      FID_INPUT_ISCD: "005930",
+    });
+
+    const headers1 = {
+      authorization:
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImQ2MjlhMDExLTQzZWQtNGJkNi1iNWU4LTJmNzgxOTY2Nzc4NCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNDYxNjYzLCJpYXQiOjE3MTAzNzUyNjMsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.aWuT0H1rKA5p4Q8uvnlO5KRR2SxQcvW-EQzdvlIIVMEM7E-jIOCGYthqUnSsT3dQ-me5V8qY8iudVE6npM6n8g",
+      appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
+      appsecret:
+        "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+      tr_id: "FHKST01010100",
     };
 
-    // 외부 API 호출
-    const response = await axios.get(apiUrl, { params });
-    console.log(response.data);
+    const response1 = await axios.get(
+      `${apiUrl1}?${queryParameters1.toString()}`,
+      { headers: headers1 }
+    );
+    const responseData1 = response1.data;
 
-    // 외부 API로부터 받은 전체 데이터를 클라이언트로 전송
-    return res.json(response.data);
+    // "per"과 "pbr"
+    const { per, pbr } = responseData1.output;
+
+    // 2. 국내주식 손익계산서 API
+    const apiUrl2 =
+      "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/finance/income-statement";
+
+    const queryParameters2 = new URLSearchParams({
+      FID_DIV_CLS_CODE: "0",
+      fid_cond_mrkt_div_code: "J",
+      fid_input_iscd: "005930",
+    });
+
+    const headers2 = {
+      "content-type": "application/json; charset=utf-8",
+      authorization:
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImQ2MjlhMDExLTQzZWQtNGJkNi1iNWU4LTJmNzgxOTY2Nzc4NCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNDYxNjYzLCJpYXQiOjE3MTAzNzUyNjMsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.aWuT0H1rKA5p4Q8uvnlO5KRR2SxQcvW-EQzdvlIIVMEM7E-jIOCGYthqUnSsT3dQ-me5V8qY8iudVE6npM6n8g",
+      appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
+      appsecret:
+        "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+      tr_id: "FHKST66430200",
+      custtype: "P",
+    };
+
+    const response2 = await axios.get(
+      `${apiUrl2}?${queryParameters2.toString()}`,
+      { headers: headers2 }
+    );
+    const responseData2 = response2.data;
+    const { stac_yymm, sale_account, bsop_prti, thtr_ntin } =
+      responseData2.output[0];
+
+    // 3. 국내주식 재무비율
+    const apiUrl3 =
+      "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/finance/financial-ratio";
+
+    const queryParameters3 = new URLSearchParams({
+      FID_DIV_CLS_CODE: "0",
+      fid_cond_mrkt_div_code: "J",
+      fid_input_iscd: "005930",
+    });
+
+    const headers3 = {
+      "content-type": "application/json; charset=utf-8",
+      authorization:
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImQ2MjlhMDExLTQzZWQtNGJkNi1iNWU4LTJmNzgxOTY2Nzc4NCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNDYxNjYzLCJpYXQiOjE3MTAzNzUyNjMsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.aWuT0H1rKA5p4Q8uvnlO5KRR2SxQcvW-EQzdvlIIVMEM7E-jIOCGYthqUnSsT3dQ-me5V8qY8iudVE6npM6n8g",
+      appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
+      appsecret:
+        "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+      tr_id: "FHKST66430300",
+      custtype: "P",
+    };
+
+    const response3 = await axios.get(
+      `${apiUrl3}?${queryParameters3.toString()}`,
+      { headers: headers3 }
+    );
+    const responseData3 = response3.data;
+    const {
+      grs,
+      bsop_prfi_inrt,
+      ntin_inrt,
+      roe_val,
+      eps,
+      bps,
+      rsrv_rate,
+      lblt_rate,
+    } = responseData3.output[0];
+
+    // 4. 국내주식 기타주요비율
+
+    const apiUrl4 =
+      "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/finance/other-major-ratios";
+
+    const queryParameters4 = new URLSearchParams({
+      FID_DIV_CLS_CODE: "0",
+      fid_cond_mrkt_div_code: "J",
+      fid_input_iscd: "005930",
+    });
+
+    const headers4 = {
+      "content-type": "application/json; charset=utf-8",
+      authorization:
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImQ2MjlhMDExLTQzZWQtNGJkNi1iNWU4LTJmNzgxOTY2Nzc4NCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNDYxNjYzLCJpYXQiOjE3MTAzNzUyNjMsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.aWuT0H1rKA5p4Q8uvnlO5KRR2SxQcvW-EQzdvlIIVMEM7E-jIOCGYthqUnSsT3dQ-me5V8qY8iudVE6npM6n8g",
+      appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
+      appsecret:
+        "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+      tr_id: "FHKST66430500",
+      custtype: "P",
+    };
+
+    const response4 = await axios.get(
+      `${apiUrl4}?${queryParameters4.toString()}`,
+      { headers: headers4 }
+    );
+
+    const responseData4 = response4.data;
+    const { ev_ebitda } = responseData4.output[0];
+
+    // 클라이언트에 per과 pbr 값을 반환
+    res.json({
+      per,
+      pbr,
+      stac_yymm,
+      sale_account,
+      bsop_prti,
+      thtr_ntin,
+      grs,
+      bsop_prfi_inrt,
+      ntin_inrt,
+      roe_val,
+      eps,
+      bps,
+      rsrv_rate,
+      lblt_rate,
+      ev_ebitda,
+    });
   } catch (error) {
     console.error("Error while fetching external API:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error2" });
   }
 });
 
