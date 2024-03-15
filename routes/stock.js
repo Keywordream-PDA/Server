@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/info", async (req, res) => {
   try {
     // 1. 주식현재가 시세 API
     const apiUrl1 =
@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
 
     const headers1 = {
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImQ2MjlhMDExLTQzZWQtNGJkNi1iNWU4LTJmNzgxOTY2Nzc4NCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNDYxNjYzLCJpYXQiOjE3MTAzNzUyNjMsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.aWuT0H1rKA5p4Q8uvnlO5KRR2SxQcvW-EQzdvlIIVMEM7E-jIOCGYthqUnSsT3dQ-me5V8qY8iudVE6npM6n8g",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
@@ -44,7 +44,7 @@ router.get("/", async (req, res) => {
     const headers2 = {
       "content-type": "application/json; charset=utf-8",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImQ2MjlhMDExLTQzZWQtNGJkNi1iNWU4LTJmNzgxOTY2Nzc4NCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNDYxNjYzLCJpYXQiOjE3MTAzNzUyNjMsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.aWuT0H1rKA5p4Q8uvnlO5KRR2SxQcvW-EQzdvlIIVMEM7E-jIOCGYthqUnSsT3dQ-me5V8qY8iudVE6npM6n8g",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
@@ -73,7 +73,7 @@ router.get("/", async (req, res) => {
     const headers3 = {
       "content-type": "application/json; charset=utf-8",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImQ2MjlhMDExLTQzZWQtNGJkNi1iNWU4LTJmNzgxOTY2Nzc4NCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNDYxNjYzLCJpYXQiOjE3MTAzNzUyNjMsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.aWuT0H1rKA5p4Q8uvnlO5KRR2SxQcvW-EQzdvlIIVMEM7E-jIOCGYthqUnSsT3dQ-me5V8qY8iudVE6npM6n8g",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
@@ -111,7 +111,7 @@ router.get("/", async (req, res) => {
     const headers4 = {
       "content-type": "application/json; charset=utf-8",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImQ2MjlhMDExLTQzZWQtNGJkNi1iNWU4LTJmNzgxOTY2Nzc4NCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNDYxNjYzLCJpYXQiOjE3MTAzNzUyNjMsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.aWuT0H1rKA5p4Q8uvnlO5KRR2SxQcvW-EQzdvlIIVMEM7E-jIOCGYthqUnSsT3dQ-me5V8qY8iudVE6npM6n8g",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
