@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/info", async (req, res) => {
   try {
     // 1. 주식현재가 시세 API
     const apiUrl1 =
