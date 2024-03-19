@@ -55,7 +55,7 @@ const fetchData = async () => {
       mostViewedRes = await fetchMostViewed();
       mostExchanged = mostExchangedRes.dataBody
       mostIncreased = mostIncreasedRes.dataBody
-      mostViewed = mostViewedRes.dataBody
+      mostViewed = mostViewedRes.dataBody.list
       console.log('Data updated successfully.');
     } catch (error) {
       console.error('Error updating data:', error);
