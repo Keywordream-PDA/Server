@@ -9,7 +9,8 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const searchRouter = require("./routes/search");
 const stockRouter = require("./routes/stock");
-const mainRouter = require("./routes/main")
+const mainRouter = require("./routes/main");
+const finstatRouter = require("./routes/finstat");
 
 var app = express();
 
@@ -39,6 +40,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/stock", stockRouter);
 app.use("/api/main", mainRouter);
+app.use("/api/finstat", finstatRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
