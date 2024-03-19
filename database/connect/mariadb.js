@@ -24,6 +24,42 @@ async function GetDataList() {
   }
 }
 
+async function saveDataToDatabase(data) {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    // 데이터베이스에 저장할 쿼리 작성
+    const query =
+      "INSERT INTO Statement (per, pbr, sale_account, bsop_prti, thtr_ntin, grs, bsop_prfi_inrt, ntin_inrt, roe_val, eps, bps, rsrv_rate, lblt_rate, ev_ebitda) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // 데이터베이스에 저장할 값 설정
+    const values = [
+      data.per,
+      data.pbr,
+      data.sale_account,
+      data.bsop_prti,
+      data.thtr_ntin,
+      data.grs,
+      data.bsop_prfi_inrt,
+      data.ntin_inrt,
+      data.roe_val,
+      data.eps,
+      data.bps,
+      data.rsrv_rate,
+      data.lblt_rate,
+      data.ev_ebitda,
+    ];
+    // 쿼리 실행
+    await conn.query(query, values);
+  } catch (error) {
+    throw error;
+  } finally {
+    if (conn) conn.end();
+  }
+}
+
 module.exports = {
   GetDataList: GetDataList,
+  saveDataToDatabase: saveDataToDatabase,
 };
+
+// Statement : DB 이름

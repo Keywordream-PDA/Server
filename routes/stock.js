@@ -1,6 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const router = express.Router();
+const mariadb = require("../database/connect/mariadb");
 
 router.get("/info", async (req, res) => {
   try {
@@ -15,7 +16,7 @@ router.get("/info", async (req, res) => {
 
     const headers1 = {
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjVjYzliNjhhLWMxNDItNDE0NS04Y2I0LTM3Njk1ZjUyZDE5NyIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwODkwMjc3LCJpYXQiOjE3MTA4MDM4NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.eoLEJutqiJkyQRQxYLWXOtGh9Y8LymmzZRx0JhzSHRRrCd3btiw3zpeB2wq0OL4DP87GWbIBr3qpZoLwRUYqng",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
@@ -44,7 +45,7 @@ router.get("/info", async (req, res) => {
     const headers2 = {
       "content-type": "application/json; charset=utf-8",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjVjYzliNjhhLWMxNDItNDE0NS04Y2I0LTM3Njk1ZjUyZDE5NyIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwODkwMjc3LCJpYXQiOjE3MTA4MDM4NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.eoLEJutqiJkyQRQxYLWXOtGh9Y8LymmzZRx0JhzSHRRrCd3btiw3zpeB2wq0OL4DP87GWbIBr3qpZoLwRUYqng",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
@@ -73,7 +74,7 @@ router.get("/info", async (req, res) => {
     const headers3 = {
       "content-type": "application/json; charset=utf-8",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjVjYzliNjhhLWMxNDItNDE0NS04Y2I0LTM3Njk1ZjUyZDE5NyIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwODkwMjc3LCJpYXQiOjE3MTA4MDM4NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.eoLEJutqiJkyQRQxYLWXOtGh9Y8LymmzZRx0JhzSHRRrCd3btiw3zpeB2wq0OL4DP87GWbIBr3qpZoLwRUYqng",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
@@ -111,7 +112,7 @@ router.get("/info", async (req, res) => {
     const headers4 = {
       "content-type": "application/json; charset=utf-8",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjVjYzliNjhhLWMxNDItNDE0NS04Y2I0LTM3Njk1ZjUyZDE5NyIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwODkwMjc3LCJpYXQiOjE3MTA4MDM4NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.eoLEJutqiJkyQRQxYLWXOtGh9Y8LymmzZRx0JhzSHRRrCd3btiw3zpeB2wq0OL4DP87GWbIBr3qpZoLwRUYqng",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
@@ -127,11 +128,30 @@ router.get("/info", async (req, res) => {
     const responseData4 = response4.data;
     const { ev_ebitda } = responseData4.output[0];
 
+    // const mappedData = {
+    //   per,
+    //   pbr,
+    //   saleAccount: sale_account,
+    //   bsopPrti: bsop_prti,
+    //   thtrNtin: thtr_ntin,
+    //   grs,
+    //   bsopPrfiInrt: bsop_prfi_inrt,
+    //   ntinInrt: ntin_inrt,
+    //   roeVal: roe_val,
+    //   eps,
+    //   bps,
+    //   rsrvRate: rsrv_rate,
+    //   lbltRate: lblt_rate,
+    //   evEbitda: ev_ebitda,
+    // };
+
+    // // 데이터베이스에 저장
+    // await mariadb.saveDataToDatabase(mappedData);
+
     // 클라이언트에 per과 pbr 값을 반환
     res.json({
       per,
       pbr,
-      stac_yymm,
       sale_account,
       bsop_prti,
       thtr_ntin,
