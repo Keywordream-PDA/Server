@@ -72,9 +72,9 @@ async function saveDataToDatabase(data) {
 }
 
 module.exports = {
-  GetDataList:GetDataList,
+  GetDataList: GetDataList,
   GetKeyword: GetKeyword,
-  pool,
+  pool : pool
 };
 
 // Statement : DB 이름
