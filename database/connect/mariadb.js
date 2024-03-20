@@ -7,20 +7,34 @@ const pool = mariadb.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
+  connectionLimit: 3,
 });
 
 async function GetDataList() {
   let conn, rows;
   try {
     conn = await pool.getConnection();
-    // console.log(conn);
-    rows = await conn.query("SELECT * from test;");
-    // console.log(rows);
+    //console.log(conn);
+    rows = await conn.query("SELECT * from user;");
+    conn.release();
+    return rows;
+    //console.log(rows);
   } catch (err) {
     throw err;
-  } finally {
-    if (conn) conn.end();
+  }
+}
+
+async function GetKeyword(stockCode) {
+  let conn, rows;
+  try {
+    conn = await pool.getConnection();
+    //console.log(conn);
+    rows = await conn.query("SELECT data from Keyword WHERE stockCode = ?;", stockCode);
+    conn.release();
     return rows;
+    //console.log(rows);
+  } catch (err) {
+    throw err;
   }
 }
 
@@ -53,13 +67,14 @@ async function saveDataToDatabase(data) {
   } catch (error) {
     throw error;
   } finally {
-    if (conn) conn.end();
+    if (conn) conn.release();
   }
 }
 
 module.exports = {
-  GetDataList: GetDataList,
-  saveDataToDatabase: saveDataToDatabase,
+  GetDataList:GetDataList,
+  GetKeyword: GetKeyword,
+  pool,
 };
 
 // Statement : DB 이름
