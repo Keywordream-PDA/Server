@@ -20,7 +20,7 @@ router.get("/day", async (req, res) => {
     const headers = {
       "Content-type": "application/json",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjVjYzliNjhhLWMxNDItNDE0NS04Y2I0LTM3Njk1ZjUyZDE5NyIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwODkwMjc3LCJpYXQiOjE3MTA4MDM4NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.eoLEJutqiJkyQRQxYLWXOtGh9Y8LymmzZRx0JhzSHRRrCd3btiw3zpeB2wq0OL4DP87GWbIBr3qpZoLwRUYqng",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjAzMjZhYzY5LTdlYjEtNDQxNC04ZjdiLWRhNDlhZmJhODY4MiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwOTc3OTY1LCJpYXQiOjE3MTA4OTE1NjUsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.cQQ12usbNDswD74IXG4xhvldad0kWNIZcfEnyeWvLggEbiAmoyskhRfP6Hh8WrJJl1R8KXyGUB-4nHrHGDWdLg",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
@@ -31,12 +31,13 @@ router.get("/day", async (req, res) => {
       headers: headers,
     });
     const responseData = response.data;
+    console.log(responseData);
 
     const extractedData = responseData.output2.map((item) => {
       return {
         stck_bsop_date: item.stck_bsop_date,
         stck_clpr: item.stck_clpr,
-        prdy_vol: item.prdy_vol,
+        acml_vol: item.acml_vol,
         acml_tr_pbmn: item.acml_tr_pbmn,
       };
     });
