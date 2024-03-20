@@ -60,6 +60,7 @@ async function saveDataToDatabase(data) {
 module.exports = {
   GetDataList: GetDataList,
   saveDataToDatabase: saveDataToDatabase,
+  pool : pool
 };
 
 // Statement : DB 이름
