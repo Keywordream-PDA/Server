@@ -9,16 +9,35 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const searchRouter = require("./routes/search");
 const stockRouter = require("./routes/stock");
-const mainRouter = require("./routes/main")
+const mainRouter = require("./routes/main");
 
 var app = express();
 
 const maria = require("./database/connect/mariadb");
+const cron = require("node-cron"); // 스케줄링
+const { BatchStocks } = require("./utils/BatchStocks");
 
+// MariaDB 연결
 maria
   .GetDataList()
   .then((rows) => {
-    console.log("DB Connected Successful!");
+    console.log("DB Connection Successful");
+
+    // Stock 배치 1) 서버 시작하는 경우
+    // BatchStocks();
+
+    // Stock 배치 2) 매일 오전 8시
+    cron.schedule(
+      "0 8 * * *",
+      () => {
+        console.log("Stock Table Batch Successful");
+        BatchStocks();
+      },
+      {
+        scheduled: true,
+        timezone: "Asia/Seoul",
+      }
+    );
   })
   .catch((err) => {
     console.log("DB Connection Failed:", err);

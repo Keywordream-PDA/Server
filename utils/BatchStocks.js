@@ -41,7 +41,7 @@ async function fetchStockList(accessToken) {
 
   try {
     const response = await axios.request(stockListConfig);
-    console.log(response.data.t8430OutBlock);
+    // console.log(response.data.t8430OutBlock);
     return response.data.t8430OutBlock;
   } catch (error) {
     console.log("Error in fetchStockList:", error);
@@ -73,8 +73,6 @@ async function saveStockList(dataList) {
     const today = new Date().toISOString().slice(0, 10);
     const deleteQuery = `DELETE FROM Stock WHERE updated <> ?;`;
     await conn.query(deleteQuery, [today]);
-
-    console.log("Succeed in saveStockList");
     return null;
   } catch (error) {
     throw error;
@@ -84,15 +82,17 @@ async function saveStockList(dataList) {
 }
 
 // main
-async function main() {
+async function BatchStocks() {
   try {
     const accessToken = await fetchAccessToken();
     const stockListData = await fetchStockList(accessToken);
     await saveStockList(stockListData);
     process.exit(0);
   } catch (error) {
-    console.error("Error in main:", error);
+    console.error("Error in BatchStocks:", error);
   }
 }
 
-main();
+// BatchStocks();
+
+module.exports = { saveStockList, BatchStocks };
