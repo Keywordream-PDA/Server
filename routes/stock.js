@@ -1,6 +1,9 @@
-var express = require("express");
+const express = require("express");
 const axios = require("axios");
-var router = express.Router();
+const cron = require("node-cron");
+const router = express.Router();
+
+let accessToken = null;
 
 // Function to fetch access token
 const fetchAccessToken = async () => {
@@ -14,42 +17,60 @@ const fetchAccessToken = async () => {
 
   try {
     const response = await axios.post(tokenUrl, body);
-    return response.data.access_token;
+    accessToken = response.data.access_token;
+    console.log("Access token fetched successfully.");
   } catch (error) {
     console.error("Error fetching access token:", error);
     throw error; // Rethrow the error to handle it appropriately
   }
 };
 
-// Middleware to set authorization header with fetched access token
-const setAuthorizationHeader = async (req, res, next) => {
+// Schedule cron job to fetch access token daily at a specific time (e.g., 2:00 AM)
+cron.schedule("0 2 * * *", async () => {
   try {
-    const accessToken = await fetchAccessToken();
-    req.accessToken = accessToken;
-    next();
+    await fetchAccessToken();
   } catch (error) {
-    res.status(500).json({ error: "Error fetching access token" });
+    console.error("Error scheduling cron job:", error);
   }
-};
+});
 
+// Middleware to set authorization header with fetched access token
+const setAuthorizationHeader = (req, res, next) => {
+  if (!accessToken) {
+    return res.status(500).json({ error: "Access token not available." });
+  }
+  req.accessToken = accessToken;
+  next();
+};
 /* GET home page. */
-router.get("/day", setAuthorizationHeader, async (req, res) => {
+router.get("/day", async (req, res) => {
   try {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const formattedDateString =
+      yesterday.toISOString().substring(0, 4) +
+      yesterday.toISOString().substring(5, 7) +
+      yesterday.toISOString().substring(8, 10);
+
     const url =
       "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice";
 
     const query = new URLSearchParams({
       FID_COND_MRKT_DIV_CODE: "J",
       FID_INPUT_ISCD: "005930",
-      FID_INPUT_DATE_1: "20230319",
-      FID_INPUT_DATE_2: "20240319",
+      FID_INPUT_DATE_1: "20231024",
+      FID_INPUT_DATE_2: formattedDateString,
       FID_PERIOD_DIV_CODE: "D",
       FID_ORG_ADJ_PRC: "0",
     });
 
     const headers = {
       "Content-type": "application/json",
-      authorization: `Bearer ${req.accessToken}`,
+      authorization:
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjAzMjZhYzY5LTdlYjEtNDQxNC04ZjdiLWRhNDlhZmJhODY4MiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwOTc3OTY1LCJpYXQiOjE3MTA4OTE1NjUsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.cQQ12usbNDswD74IXG4xhvldad0kWNIZcfEnyeWvLggEbiAmoyskhRfP6Hh8WrJJl1R8KXyGUB-4nHrHGDWdLg",
+      appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
+      appsecret:
+        "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
       tr_id: "FHKST03010100",
     };
 
@@ -57,7 +78,7 @@ router.get("/day", setAuthorizationHeader, async (req, res) => {
       headers: headers,
     });
     const responseData = response.data;
-    console.log(responseData);
+    // console.log(responseData);
 
     const extractedData = responseData.output2.map((item) => {
       return {
@@ -76,3 +97,5 @@ router.get("/day", setAuthorizationHeader, async (req, res) => {
 });
 
 module.exports = router;
+
+//날짜, 종가, 등락률, 거래량(주), 거래대금
