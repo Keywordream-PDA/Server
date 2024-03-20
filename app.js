@@ -10,9 +10,12 @@ var usersRouter = require("./routes/users");
 const searchRouter = require("./routes/search");
 const stockRouter = require("./routes/stock");
 const mainRouter = require("./routes/main");
+const finstatRouter = require("./routes/finstat");
+const keywordRouter = require("./routes/keyword");
 
 var app = express();
 
+// mariaDB connect
 const maria = require("./database/connect/mariadb");
 const cron = require("node-cron"); // 스케줄링
 const { BatchStocks } = require("./utils/BatchStocks");
@@ -41,7 +44,7 @@ maria
   })
   .catch((err) => {
     console.log("DB Connection Failed:", err);
-  });
+});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -58,6 +61,8 @@ app.use("/api/users", usersRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/stock", stockRouter);
 app.use("/api/main", mainRouter);
+app.use("/api/finstat", finstatRouter);
+app.use("/api/keyword", keywordRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
