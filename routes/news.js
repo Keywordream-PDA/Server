@@ -1,7 +1,8 @@
 const express = require('express');
 const getTags = require('../database/news/tag');
 const getNewsList = require('../database/news/list');
-const getTimeAgo = require('../utils/time');
+const {getTimeAgo, getTimeDetail} = require('../utils/time');
+const getNewsDetail = require('../database/news/detail');
 const router = express.Router();
 
 router.post('/tags', async (req, res, next) => {
@@ -29,5 +30,19 @@ router.post('/list', async(req, res, next) => {
         throw error
     }
 })
+
+router.post('/detail', async(req, res, next) => {
+    const {newsId} = req.body
+    try{
+        const newsDetail = await getNewsDetail(newsId);
+        newsDetail.newsDate = getTimeDetail(newsDetail.newsDate)
+        res.json(newsDetail)
+    } catch{
+        console.log("news의 detail에서 오류")
+        throw error
+    }
+})
+
+
 
 module.exports = router;
