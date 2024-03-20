@@ -74,6 +74,7 @@ async function saveDataToDatabase(data) {
 module.exports = {
   GetDataList:GetDataList,
   GetKeyword: GetKeyword,
+  pool,
 };
 
 // Statement : DB 이름

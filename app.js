@@ -17,10 +17,32 @@ var app = express();
 
 // mariaDB connect
 const maria = require("./database/connect/mariadb");
+const cron = require("node-cron"); // 스케줄링
+const { BatchStocks } = require("./utils/BatchStocks");
 
-maria.GetDataList().then(() => {
-    console.log("DB Connected Successful!");
-}).catch((err) => {
+// MariaDB 연결
+maria
+  .GetDataList()
+  .then((rows) => {
+    console.log("DB Connection Successful");
+
+    // Stock 배치 1) 서버 시작하는 경우
+    // BatchStocks();
+
+    // Stock 배치 2) 매일 오전 8시
+    cron.schedule(
+      "0 8 * * *",
+      () => {
+        console.log("Stock Table Batch Successful");
+        BatchStocks();
+      },
+      {
+        scheduled: true,
+        timezone: "Asia/Seoul",
+      }
+    );
+  })
+  .catch((err) => {
     console.log("DB Connection Failed:", err);
 });
 
