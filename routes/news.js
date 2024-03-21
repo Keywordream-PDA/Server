@@ -1,15 +1,14 @@
 const express = require('express');
-const getTags = require('../database/news/tag');
 const getNewsList = require('../database/news/list');
 const {getTimeAgo, getTimeDetail} = require('../utils/time');
 const getNewsDetail = require('../database/news/detail');
+const getTagTop3 = require('../database/news/tag');
 const router = express.Router();
 
 router.post('/tags', async (req, res, next) => {
     const {stockCode} = req.body
     try{
-      const tags = await getTags(stockCode)
-      const tagTop3 = [tags[0].word, tags[1].word, tags[2].word]
+      const tagTop3 = await getTagTop3(stockCode)
       res.json(tagTop3)
     } catch {
       console.log("news의 tags에서 오류")
@@ -32,10 +31,11 @@ router.post('/list', async(req, res, next) => {
 })
 
 router.post('/detail', async(req, res, next) => {
-    const {newsId} = req.body
+    const {stockCode, newsId} = req.body
     try{
         const newsDetail = await getNewsDetail(newsId);
         newsDetail.newsDate = getTimeDetail(newsDetail.newsDate)
+        newsDetail.content = await applyKeywordToContent(newsDetail.content, stockCode)
         res.json(newsDetail)
     } catch{
         console.log("news의 detail에서 오류")
@@ -43,6 +43,20 @@ router.post('/detail', async(req, res, next) => {
     }
 })
 
-
+const applyKeywordToContent = async (content, stockCode) => {
+    try {
+        const tagTop3 = await getTagTop3(stockCode);
+        console.log(tagTop3)
+        console.log(typeof content)
+        tagTop3.forEach(tag => {
+            const regex = new RegExp(tag, "g");
+            content = content.replace(regex, `<span style="background-color: #e2e8ff">${tag}</span>`);
+        });
+        return content;
+    } catch (error) {
+        console.log("content에서 keyword 적용 오류:", error);
+        throw error;
+    }
+}
 
 module.exports = router;
