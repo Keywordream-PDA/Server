@@ -13,6 +13,7 @@ const mainRouter = require("./routes/main");
 const finstatRouter = require("./routes/finstat");
 const newsRouter = require("./routes/news")
 const keywordRouter = require("./routes/keyword");
+const chartRouter = require("./routes/chart");
 
 var app = express();
 
@@ -29,23 +30,24 @@ maria
 
     // Stock 배치 1) 서버 시작하는 경우
     // BatchStocks();
+    // console.log("배치 완료");
 
     // Stock 배치 2) 매일 오전 8시
-    cron.schedule(
-      "0 8 * * *",
-      () => {
-        console.log("Stock Table Batch Successful");
-        BatchStocks();
-      },
-      {
-        scheduled: true,
-        timezone: "Asia/Seoul",
-      }
-    );
+    // cron.schedule(
+    //   "0 8 * * *",
+    //   () => {
+    //     console.log("Stock Table Batch Successful");
+    //     BatchStocks();
+    //   },
+    //   {
+    //     scheduled: true,
+    //     timezone: "Asia/Seoul",
+    //   }
+    // );
   })
   .catch((err) => {
     console.log("DB Connection Failed:", err);
-});
+  });
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -65,6 +67,7 @@ app.use("/api/main", mainRouter);
 app.use("/api/finstat", finstatRouter);
 app.use("/api/news", newsRouter);
 app.use("/api/keyword", keywordRouter);
+app.use("/api/chart", chartRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
