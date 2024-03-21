@@ -8,8 +8,8 @@ let approval_key;
 
 let data = {
   "grant_type" : "client_credentials",
-  "appkey" : process.env.APP_KEY,
-  "secretkey" : process.env.APP_SECRET
+  "appkey" : process.env.KO_INV_APP_KEY,
+  "secretkey" : process.env.KO_INV_APP_SECRET
 };
 
 let config = {
