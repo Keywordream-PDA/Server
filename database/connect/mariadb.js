@@ -99,10 +99,11 @@ async function saveDataToDatabase(data) {
 }
 
 module.exports = {
-  GetDataList:GetDataList,
+  GetDataList: GetDataList,
   GetKeyword: GetKeyword,
   GetsearchList:GetsearchList,
   GetsearchAll: GetsearchAll,
+  pool : pool
 };
 
 // Statement : DB 이름
