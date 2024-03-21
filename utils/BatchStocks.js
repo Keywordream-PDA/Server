@@ -17,7 +17,11 @@ async function fetchStockList(accessToken) {
       tr_cont_key: '""',
       mac_address: '""',
     },
-    data: '{\r\n    "t8430InBlock" :{\r\n        "gubun" : "0"\r\n    }\r\n}',
+    data: {
+      t8430InBlock: {
+        gubun: "0",
+      },
+    },
   };
 
   try {
