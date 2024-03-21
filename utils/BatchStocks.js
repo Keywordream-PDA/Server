@@ -1,33 +1,14 @@
 const axios = require("axios");
 const { pool } = require("../database/connect/mariadb.js");
-const moment = require("moment");
+const { fetchAccessToken } = require("./token/EbestToken.js");
 
-// 토큰 발급
-async function fetchAccessToken() {
-  const tokenConfig = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "https://openapi.ebestsec.co.kr:8080/oauth2/token?grant_type=client_credentials&appkey=PSPhjLFhHjn3wXWG43tmUWxtlrYey7YmpSOo&appsecretkey=uWjrrjYPhstCRtVlPua6sHfamW1t1QOF&scope=oob",
-    headers: {
-      "content-type": "application/x-www-form-urlencoded",
-    },
-  };
-
-  try {
-    const tokenResponse = await axios.request(tokenConfig);
-    const accessToken = tokenResponse.data.access_token;
-    return accessToken;
-  } catch (error) {
-    console.error("Error in fetchAccessToken:", error);
-    throw error;
-  }
-}
+const stocksURL = "https://openapi.ebestsec.co.kr:8080/stock/etc";
 
 // 주식 종목 리스트 가져오기
 async function fetchStockList(accessToken) {
   const stockListConfig = {
     method: "post",
-    url: "https://openapi.ebestsec.co.kr:8080/stock/etc",
+    url: stocksURL,
     headers: {
       "content-type": "application/json; charset=utf-8",
       authorization: `Bearer ${accessToken}`,
@@ -55,6 +36,11 @@ async function saveStockList(dataList) {
   try {
     conn = await pool.getConnection();
 
+    // 배치 전 레코드 개수 출력
+    const countBeforeBatch = `SELECT COUNT(*) AS count FROM Stock;`;
+    const [rowsBeforeBatch] = await conn.query(countBeforeBatch);
+    console.log("배치 전 stock 개수:", Number(rowsBeforeBatch.count));
+
     const query = `
       INSERT INTO Stock (stockCode, name, market, updated)
       VALUES (?, ?, ?, CURDATE())
@@ -62,7 +48,7 @@ async function saveStockList(dataList) {
       name = VALUES(name),
       market = VALUES(market),
       updated = CURDATE();`;
-    // stockCode 종목코드, name 이름, section 업종, market 시장
+    // stockCode 종목코드, name 이름, section 업종, market 시장, updated 오늘 날짜
 
     dataList.forEach(async (data) => {
       const values = [data.shcode, data.hname, data.gubun];
@@ -73,6 +59,11 @@ async function saveStockList(dataList) {
     const today = new Date().toISOString().slice(0, 10);
     const deleteQuery = `DELETE FROM Stock WHERE updated <> ?;`;
     await conn.query(deleteQuery, [today]);
+
+    // 배치 후 레코드 개수 출력
+    const countAfterBatch = `SELECT COUNT(*) AS count FROM Stock;`;
+    const [rowsAfterBatch] = await conn.query(countAfterBatch);
+    console.log("배치 후 stock 개수:", Number(rowsAfterBatch.count));
     return null;
   } catch (error) {
     throw error;
