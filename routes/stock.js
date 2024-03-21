@@ -1,150 +1,95 @@
 const express = require("express");
 const axios = require("axios");
+const cron = require("node-cron");
 const router = express.Router();
 
-router.get("/info", async (req, res) => {
-  try {
-    // 1. 주식현재가 시세 API
-    const apiUrl1 =
-      "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price";
+let accessToken = null;
 
-    const queryParameters1 = new URLSearchParams({
+// Function to fetch access token
+const fetchAccessToken = async () => {
+  const tokenUrl = "https://openapi.koreainvestment.com:9443/oauth2/tokenP";
+  const body = {
+    grant_type: "client_credentials",
+    appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
+    appsecret:
+      "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+  };
+
+  try {
+    const response = await axios.post(tokenUrl, body);
+    accessToken = response.data.access_token;
+    console.log("Access token fetched successfully.");
+  } catch (error) {
+    console.error("Error fetching access token:", error);
+    throw error; // Rethrow the error to handle it appropriately
+  }
+};
+
+// Schedule cron job to fetch access token daily at a specific time (e.g., 2:00 AM)
+cron.schedule("0 2 * * *", async () => {
+  try {
+    await fetchAccessToken();
+  } catch (error) {
+    console.error("Error scheduling cron job:", error);
+  }
+});
+
+// Middleware to set authorization header with fetched access token
+const setAuthorizationHeader = (req, res, next) => {
+  if (!accessToken) {
+    return res.status(500).json({ error: "Access token not available." });
+  }
+  req.accessToken = accessToken;
+  next();
+};
+/* GET home page. */
+router.get("/day", async (req, res) => {
+  try {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const formattedDateString =
+      yesterday.toISOString().substring(0, 4) +
+      yesterday.toISOString().substring(5, 7) +
+      yesterday.toISOString().substring(8, 10);
+
+    const url =
+      "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice";
+
+    const query = new URLSearchParams({
       FID_COND_MRKT_DIV_CODE: "J",
       FID_INPUT_ISCD: "005930",
+      FID_INPUT_DATE_1: "20231024",
+      FID_INPUT_DATE_2: formattedDateString,
+      FID_PERIOD_DIV_CODE: "D",
+      FID_ORG_ADJ_PRC: "0",
     });
 
-    const headers1 = {
+    const headers = {
+      "Content-type": "application/json",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjAzMjZhYzY5LTdlYjEtNDQxNC04ZjdiLWRhNDlhZmJhODY4MiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwOTc3OTY1LCJpYXQiOjE3MTA4OTE1NjUsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.cQQ12usbNDswD74IXG4xhvldad0kWNIZcfEnyeWvLggEbiAmoyskhRfP6Hh8WrJJl1R8KXyGUB-4nHrHGDWdLg",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
-      tr_id: "FHKST01010100",
+      tr_id: "FHKST03010100",
     };
 
-    const response1 = await axios.get(
-      `${apiUrl1}?${queryParameters1.toString()}`,
-      { headers: headers1 }
-    );
-    const responseData1 = response1.data;
+    const response = await axios.get(`${url}?${query.toString()}`, {
+      headers: headers,
+    });
+    const responseData = response.data;
+    // console.log(responseData);
 
-    // "per"과 "pbr"
-    const { per, pbr } = responseData1.output;
-
-    // 2. 국내주식 손익계산서 API
-    const apiUrl2 =
-      "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/finance/income-statement";
-
-    const queryParameters2 = new URLSearchParams({
-      FID_DIV_CLS_CODE: "0",
-      fid_cond_mrkt_div_code: "J",
-      fid_input_iscd: "005930",
+    const extractedData = responseData.output2.map((item) => {
+      return {
+        stck_bsop_date: item.stck_bsop_date,
+        stck_clpr: item.stck_clpr,
+        acml_vol: item.acml_vol,
+        acml_tr_pbmn: item.acml_tr_pbmn,
+      };
     });
 
-    const headers2 = {
-      "content-type": "application/json; charset=utf-8",
-      authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
-      appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-      appsecret:
-        "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
-      tr_id: "FHKST66430200",
-      custtype: "P",
-    };
-
-    const response2 = await axios.get(
-      `${apiUrl2}?${queryParameters2.toString()}`,
-      { headers: headers2 }
-    );
-    const responseData2 = response2.data;
-    const { stac_yymm, sale_account, bsop_prti, thtr_ntin } =
-      responseData2.output[0];
-
-    // 3. 국내주식 재무비율
-    const apiUrl3 =
-      "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/finance/financial-ratio";
-
-    const queryParameters3 = new URLSearchParams({
-      FID_DIV_CLS_CODE: "0",
-      fid_cond_mrkt_div_code: "J",
-      fid_input_iscd: "005930",
-    });
-
-    const headers3 = {
-      "content-type": "application/json; charset=utf-8",
-      authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
-      appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-      appsecret:
-        "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
-      tr_id: "FHKST66430300",
-      custtype: "P",
-    };
-
-    const response3 = await axios.get(
-      `${apiUrl3}?${queryParameters3.toString()}`,
-      { headers: headers3 }
-    );
-    const responseData3 = response3.data;
-    const {
-      grs,
-      bsop_prfi_inrt,
-      ntin_inrt,
-      roe_val,
-      eps,
-      bps,
-      rsrv_rate,
-      lblt_rate,
-    } = responseData3.output[0];
-
-    // 4. 국내주식 기타주요비율
-
-    const apiUrl4 =
-      "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/finance/other-major-ratios";
-
-    const queryParameters4 = new URLSearchParams({
-      FID_DIV_CLS_CODE: "0",
-      fid_cond_mrkt_div_code: "J",
-      fid_input_iscd: "005930",
-    });
-
-    const headers4 = {
-      "content-type": "application/json; charset=utf-8",
-      authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjE2OThkNGEyLTJkODctNGNkMS1iZGY4LTU3NmYxMzE2Yjg1YSIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwNTU0OTc3LCJpYXQiOjE3MTA0Njg1NzcsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.0MtSyB3atJZ3l55RH521JxS2bklQJeoCf7se3PLYF7Zsqml9HK3Q8gxY2dOWBJP0yWRBmPM24ucYkTnEtx-4Yg",
-      appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-      appsecret:
-        "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
-      tr_id: "FHKST66430500",
-      custtype: "P",
-    };
-
-    const response4 = await axios.get(
-      `${apiUrl4}?${queryParameters4.toString()}`,
-      { headers: headers4 }
-    );
-
-    const responseData4 = response4.data;
-    const { ev_ebitda } = responseData4.output[0];
-
-    // 클라이언트에 per과 pbr 값을 반환
-    res.json({
-      per,
-      pbr,
-      stac_yymm,
-      sale_account,
-      bsop_prti,
-      thtr_ntin,
-      grs,
-      bsop_prfi_inrt,
-      ntin_inrt,
-      roe_val,
-      eps,
-      bps,
-      rsrv_rate,
-      lblt_rate,
-      ev_ebitda,
-    });
+    res.json(extractedData);
   } catch (error) {
     console.error("Error while fetching external API:", error);
     res.status(500).json({ error: "Internal server error2" });
@@ -152,3 +97,5 @@ router.get("/info", async (req, res) => {
 });
 
 module.exports = router;
+
+//날짜, 종가, 등락률, 거래량(주), 거래대금
