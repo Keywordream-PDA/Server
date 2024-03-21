@@ -37,7 +37,34 @@ async function GetKeyword(stockCode) {
     throw err;
   }
 }
+async function GetsearchAll() {
+  let conn, rows;
+  try {
+    conn = await pool.getConnection();
+    //console.log(conn);
+    rows = await conn.query("SELECT * from Stock;");
+    conn.release();
+    return rows;
+    //console.log(rows);
+  } catch (err) {
+    throw err;
+  }
+}
 
+async function GetsearchList(query) {
+  let conn, rows;
+  const stockCode = query.code;
+  try {
+    conn = await pool.getConnection();
+    console.log(query);
+    rows = await conn.query("SELECT * from Stock WHERE stockCode = ?;", stockCode);
+    conn.release();
+    return rows;
+    //console.log(rows);
+  } catch (err) {
+    throw err;
+  }
+}
 async function saveDataToDatabase(data) {
   let conn;
   try {
@@ -74,6 +101,8 @@ async function saveDataToDatabase(data) {
 module.exports = {
   GetDataList: GetDataList,
   GetKeyword: GetKeyword,
+  GetsearchList:GetsearchList,
+  GetsearchAll: GetsearchAll,
   pool : pool
 };
 
