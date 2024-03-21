@@ -185,7 +185,6 @@ io.on("connection", (socket) => {
       removeStockList(stock, socket.id);
     })
     printStockMap()
-    console.log("disconnect stockList : ", stockList)
     console.log("프론트 소켓 연결 끊김");
   })
 
