@@ -68,7 +68,7 @@ router.get("/:stockCode/day", async (req, res) => {
     const headers = {
       "Content-type": "application/json",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjZkNzg5ODJkLTIxNDktNDQ0My1hZGUwLTRjZmE1NDFmNjEwMCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMDYyNTQwLCJpYXQiOjE3MTA5NzYxNDAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.VD-yqE-OsWwxXsmDUeWrWlESk8QdfimXUxokolBhQEpW0fxAZdF1GxGoq8N2umCzYceMkcknCfyA79cAuWMDBQ",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImMzNDc0ZmMwLWYzNDEtNGE0MC04NjIzLWEyMzU4ZTI3NWM4NiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMTU0NjgwLCJpYXQiOjE3MTEwNjgyODAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.o_xYn7xzMGaelPtgfC7zZK_zHCvbpb1YGF5Zn_mRQIJELAUkBzbRKRvhOhdkj8dn72izv0qccK-po0bYwNFtPA",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",

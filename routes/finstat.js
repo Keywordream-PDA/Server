@@ -23,93 +23,93 @@ router.get("/:stockCode/info", async (req, res) => {
   }
 });
 
-router.get("/info", async (req, res) => {
-  try {
-    // Get all stock codes from the database
-    const stockCodes = await mariadb.getAllStockCodes();
+// router.get("/info", async (req, res) => {
+//   try {
+//     // Get all stock codes from the database
+//     const stockCodes = await mariadb.getAllStockCodes();
 
-    // Log the retrieved stock codes for testing
-    console.log("Retrieved stock codes:", stockCodes);
+//     // Log the retrieved stock codes for testing
+//     console.log("Retrieved stock codes:", stockCodes);
 
-    // Counter for tracking the number of requests sent
-    let requestCount = 0;
+//     // Counter for tracking the number of requests sent
+//     let requestCount = 0;
 
-    // Function to send requests with a delay
-    const sendRequestWithDelay = async (stock) => {
-      try {
-        // Get stock data for each stock code
-        const stockData = await getStockData(stock.stockCode);
+//     // Function to send requests with a delay
+//     const sendRequestWithDelay = async (stock) => {
+//       try {
+//         // Get stock data for each stock code
+//         const stockData = await getStockData(stock.stockCode);
 
-        // Save stock data to the database
-        await mariadb.saveStatementData(stock.stockCode, stockData);
+//         // Save stock data to the database
+//         await mariadb.saveStatementData(stock.stockCode, stockData);
 
-        // Increment request count
-        requestCount++;
+//         // Increment request count
+//         requestCount++;
 
-        // Check if the request count exceeds the limit
-        if (requestCount < stockCodes.length && requestCount % 15 === 0) {
-          // Wait for 1 second before sending the next request
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      } catch (error) {
-        console.error("Error while fetching stock data:", error);
-      }
-    };
+//         // Check if the request count exceeds the limit
+//         if (requestCount < stockCodes.length && requestCount % 15 === 0) {
+//           // Wait for 1 second before sending the next request
+//           await new Promise((resolve) => setTimeout(resolve, 1000));
+//         }
+//       } catch (error) {
+//         console.error("Error while fetching stock data:", error);
+//       }
+//     };
 
-    // Loop through each stock code and send requests
-    for (const stock of stockCodes) {
-      await sendRequestWithDelay(stock);
-    }
+//     // Loop through each stock code and send requests
+//     for (const stock of stockCodes) {
+//       await sendRequestWithDelay(stock);
+//     }
 
-    // Return response to the client
-    res.json({ message: "Successfully retrieved and saved stock data" });
-  } catch (error) {
-    console.error("Error occurred:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+//     // Return response to the client
+//     res.json({ message: "Successfully retrieved and saved stock data" });
+//   } catch (error) {
+//     console.error("Error occurred:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
 
-async function getStockData(stockCode) {
-  const apiUrl =
-    "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/finance/income-statement";
+// async function getStockData(stockCode) {
+//   const apiUrl =
+//     "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/finance/income-statement";
 
-  const queryParameters = new URLSearchParams({
-    FID_DIV_CLS_CODE: "0",
-    FID_COND_MRKT_DIV_CODE: "J",
-    FID_INPUT_ISCD: stockCode,
-  });
+//   const queryParameters = new URLSearchParams({
+//     FID_DIV_CLS_CODE: "0",
+//     FID_COND_MRKT_DIV_CODE: "J",
+//     FID_INPUT_ISCD: stockCode,
+//   });
 
-  const headers = {
-    authorization:
-      "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImMzNDc0ZmMwLWYzNDEtNGE0MC04NjIzLWEyMzU4ZTI3NWM4NiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMTU0NjgwLCJpYXQiOjE3MTEwNjgyODAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.o_xYn7xzMGaelPtgfC7zZK_zHCvbpb1YGF5Zn_mRQIJELAUkBzbRKRvhOhdkj8dn72izv0qccK-po0bYwNFtPA",
-    appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-    appsecret:
-      "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
-    tr_id: "FHKST66430500",
-    custtype: "P",
-  };
+//   const headers = {
+//     authorization:
+//       "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImMzNDc0ZmMwLWYzNDEtNGE0MC04NjIzLWEyMzU4ZTI3NWM4NiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMTU0NjgwLCJpYXQiOjE3MTEwNjgyODAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.o_xYn7xzMGaelPtgfC7zZK_zHCvbpb1YGF5Zn_mRQIJELAUkBzbRKRvhOhdkj8dn72izv0qccK-po0bYwNFtPA",
+//     appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
+//     appsecret:
+//       "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+//     tr_id: "FHKST66430500",
+//     custtype: "P",
+//   };
 
-  const response = await axios.get(`${apiUrl}?${queryParameters.toString()}`, {
-    headers,
-  });
-  const responseData = response.data;
+//   const response = await axios.get(`${apiUrl}?${queryParameters.toString()}`, {
+//     headers,
+//   });
+//   const responseData = response.data;
 
-  // Check if responseData.output[0] is undefined
-  if (!responseData.output[0]) {
-    console.error(`No data found for stock code: ${stockCode}`);
-    return null;
-  }
+//   // Check if responseData.output[0] is undefined
+//   if (!responseData.output[0]) {
+//     console.error(`No data found for stock code: ${stockCode}`);
+//     return null;
+//   }
 
-  // Extract necessary data from the response
-  const { ev_ebitda } = responseData.output[0];
+//   // Extract necessary data from the response
+//   const { ev_ebitda } = responseData.output[0];
 
-  // Return the extracted data
-  return {
-    // bsop_prti,
-    ev_ebitda,
-    // Add more fields as needed
-  };
-}
+//   // Return the extracted data
+//   return {
+//     // bsop_prti,
+//     ev_ebitda,y
+//     // Add more fields as needed
+//   };
+// }
 
 module.exports = router;
 

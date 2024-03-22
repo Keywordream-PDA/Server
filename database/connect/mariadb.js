@@ -54,7 +54,6 @@ async function GetsearchAll() {
   }
 }
 
-
 async function getAllStockCodes() {
   let conn;
   try {
@@ -74,7 +73,10 @@ async function GetsearchList(query) {
   try {
     conn = await pool.getConnection();
     console.log(query);
-    rows = await conn.query("SELECT * from Stock WHERE stockCode = ?;", stockCode);
+    rows = await conn.query(
+      "SELECT * from Stock WHERE stockCode = ?;",
+      stockCode
+    );
     conn.release();
     return rows;
     //console.log(rows);
@@ -95,29 +97,29 @@ async function saveDataToDatabase(data) {
   }
 }
 
-async function saveStatementData(stockCode, data) {
-  let conn;
-  try {
-    // If data is null, save null values to the database
-    // const bsopPrti = data ? data.bsop_prti : null;
-    const evEbitda = data ? data.ev_ebitda : null;
+// async function saveStatementData(stockCode, data) {
+//   let conn;
+//   try {
+//     // If data is null, save null values to the database
+//     // const bsopPrti = data ? data.bsop_prti : null;
+//     const evEbitda = data ? data.ev_ebitda : null;
 
-    conn = await pool.getConnection();
-    // Use INSERT INTO ... ON DUPLICATE KEY UPDATE to yhandle both insertion and update
-    await conn.query(
-      `INSERT INTO Statement (stockCode, evEbitda )
-       VALUES (?, ?)
-       ON DUPLICATE KEY UPDATE
-       evEbitda  = VALUES(evEbitda );`,
-      [stockCode, evEbitda]
-    );
-    console.log(stockCode, evEbitda);
-  } catch (error) {
-    throw error;
-  } finally {
-    if (conn) conn.release();
-  }
-}
+//     conn = await pool.getConnection();
+//     // Use INSERT INTO ... ON DUPLICATE KEY UPDATE to yhandle both insertion and update
+//     await conn.query(
+//       `INSERT INTO Statement (stockCode, evEbitda )
+//        VALUES (?, ?)
+//        ON DUPLICATE KEY UPDATE
+//        evEbitda  = VALUES(evEbitda );`,
+//       [stockCode, evEbitda]
+//     );
+//     console.log(stockCode, evEbitda);
+//   } catch (error) {
+//     throw error;
+//   } finally {
+//     if (conn) conn.release();
+//   }
+// }
 
 async function getFinStat(stockCode) {
   let conn, rows;
@@ -140,10 +142,10 @@ module.exports = {
   GetDataList: GetDataList,
   GetKeyword: GetKeyword,
   getAllStockCodes: getAllStockCodes,
-  saveStatementData: saveStatementData,
+  // saveStatementData: saveStatementData,
   saveDataToDatabase: saveDataToDatabase,
   getFinStat: getFinStat,
-  GetsearchList:GetsearchList,
+  GetsearchList: GetsearchList,
   GetsearchAll: GetsearchAll,
-  pool : pool,
+  pool: pool,
 };
