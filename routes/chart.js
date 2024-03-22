@@ -4,7 +4,11 @@ const axios = require("axios");
 const { fetchAccessToken } = require("../utils/token/EbestToken.js");
 
 // 변수 관리
-const today = "20240321";
+let date = new Date();
+let year = date.getFullYear();
+let month = (date.getMonth() + 1).toString().padStart(2, "0");
+let day = date.getDate().toString().padStart(2, "0");
+let today = `${year}${month}${day}`;
 
 // const sdate; // 시작 날짜
 // const edate; // 종료 날짜
