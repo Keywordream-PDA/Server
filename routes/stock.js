@@ -43,7 +43,8 @@ const setAuthorizationHeader = (req, res, next) => {
   next();
 };
 /* GET home page. */
-router.get("/day", async (req, res) => {
+router.get("/:stockCode/day", async (req, res) => {
+  const stockCode = req.params.stockCode;
   try {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -57,7 +58,7 @@ router.get("/day", async (req, res) => {
 
     const query = new URLSearchParams({
       FID_COND_MRKT_DIV_CODE: "J",
-      FID_INPUT_ISCD: "005930",
+      FID_INPUT_ISCD: stockCode,
       FID_INPUT_DATE_1: "20231024",
       FID_INPUT_DATE_2: formattedDateString,
       FID_PERIOD_DIV_CODE: "D",
@@ -67,7 +68,7 @@ router.get("/day", async (req, res) => {
     const headers = {
       "Content-type": "application/json",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjAzMjZhYzY5LTdlYjEtNDQxNC04ZjdiLWRhNDlhZmJhODY4MiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEwOTc3OTY1LCJpYXQiOjE3MTA4OTE1NjUsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.cQQ12usbNDswD74IXG4xhvldad0kWNIZcfEnyeWvLggEbiAmoyskhRfP6Hh8WrJJl1R8KXyGUB-4nHrHGDWdLg",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImMzNDc0ZmMwLWYzNDEtNGE0MC04NjIzLWEyMzU4ZTI3NWM4NiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMTU0NjgwLCJpYXQiOjE3MTEwNjgyODAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.o_xYn7xzMGaelPtgfC7zZK_zHCvbpb1YGF5Zn_mRQIJELAUkBzbRKRvhOhdkj8dn72izv0qccK-po0bYwNFtPA",
       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
       appsecret:
         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",

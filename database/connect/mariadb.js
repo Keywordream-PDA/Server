@@ -29,7 +29,10 @@ async function GetKeyword(stockCode) {
   try {
     conn = await pool.getConnection();
     //console.log(conn);
-    rows = await conn.query("SELECT data from Keyword WHERE stockCode = ?;", stockCode);
+    rows = await conn.query(
+      "SELECT data from Keyword WHERE stockCode = ?;",
+      stockCode
+    );
     conn.release();
     return rows;
     //console.log(rows);
@@ -51,13 +54,29 @@ async function GetsearchAll() {
   }
 }
 
+async function getAllStockCodes() {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    rows = await conn.query("SELECT stockCode FROM Stock;");
+    return rows;
+  } catch (error) {
+    throw error;
+  } finally {
+    if (conn) conn.release();
+  }
+}
+
 async function GetsearchList(query) {
   let conn, rows;
   const stockCode = query.code;
   try {
     conn = await pool.getConnection();
     console.log(query);
-    rows = await conn.query("SELECT * from Stock WHERE stockCode = ?;", stockCode);
+    rows = await conn.query(
+      "SELECT * from Stock WHERE stockCode = ?;",
+      stockCode
+    );
     conn.release();
     return rows;
     //console.log(rows);
@@ -69,28 +88,8 @@ async function saveDataToDatabase(data) {
   let conn;
   try {
     conn = await pool.getConnection();
-    // 데이터베이스에 저장할 쿼리 작성
-    const query =
-      "INSERT INTO Statement (per, pbr, sale_account, bsop_prti, thtr_ntin, grs, bsop_prfi_inrt, ntin_inrt, roe_val, eps, bps, rsrv_rate, lblt_rate, ev_ebitda) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    // 데이터베이스에 저장할 값 설정
-    const values = [
-      data.per,
-      data.pbr,
-      data.sale_account,
-      data.bsop_prti,
-      data.thtr_ntin,
-      data.grs,
-      data.bsop_prfi_inrt,
-      data.ntin_inrt,
-      data.roe_val,
-      data.eps,
-      data.bps,
-      data.rsrv_rate,
-      data.lblt_rate,
-      data.ev_ebitda,
-    ];
-    // 쿼리 실행
-    await conn.query(query, values);
+    rows = await conn.query("SELECT stockCode FROM Stock;");
+    return rows;
   } catch (error) {
     throw error;
   } finally {
@@ -98,12 +97,55 @@ async function saveDataToDatabase(data) {
   }
 }
 
+// async function saveStatementData(stockCode, data) {
+//   let conn;
+//   try {
+//     // If data is null, save null values to the database
+//     // const bsopPrti = data ? data.bsop_prti : null;
+//     const evEbitda = data ? data.ev_ebitda : null;
+
+//     conn = await pool.getConnection();
+//     // Use INSERT INTO ... ON DUPLICATE KEY UPDATE to yhandle both insertion and update
+//     await conn.query(
+//       `INSERT INTO Statement (stockCode, evEbitda )
+//        VALUES (?, ?)
+//        ON DUPLICATE KEY UPDATE
+//        evEbitda  = VALUES(evEbitda );`,
+//       [stockCode, evEbitda]
+//     );
+//     console.log(stockCode, evEbitda);
+//   } catch (error) {
+//     throw error;
+//   } finally {
+//     if (conn) conn.release();
+//   }
+// }
+
+async function getFinStat(stockCode) {
+  let conn, rows;
+  try {
+    conn = await pool.getConnection();
+    //console.log(conn);
+    rows = await conn.query(
+      "SELECT * from Statement WHERE stockCode = ?;",
+      stockCode
+    );
+    conn.release();
+    return rows;
+    //console.log(rows);
+  } catch (err) {
+    throw err;
+  }
+}
+
 module.exports = {
   GetDataList: GetDataList,
   GetKeyword: GetKeyword,
-  GetsearchList:GetsearchList,
+  getAllStockCodes: getAllStockCodes,
+  // saveStatementData: saveStatementData,
+  saveDataToDatabase: saveDataToDatabase,
+  getFinStat: getFinStat,
+  GetsearchList: GetsearchList,
   GetsearchAll: GetsearchAll,
-  pool : pool
+  pool: pool,
 };
-
-// Statement : DB 이름
