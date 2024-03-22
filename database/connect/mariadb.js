@@ -40,8 +40,49 @@ async function GetKeyword(stockCode) {
     throw err;
   }
 }
+async function GetsearchAll() {
+  let conn, rows;
+  try {
+    conn = await pool.getConnection();
+    //console.log(conn);
+    rows = await conn.query("SELECT * from Stock;");
+    conn.release();
+    return rows;
+    //console.log(rows);
+  } catch (err) {
+    throw err;
+  }
+}
+
 
 async function getAllStockCodes() {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    rows = await conn.query("SELECT stockCode FROM Stock;");
+    return rows;
+  } catch (error) {
+    throw error;
+  } finally {
+    if (conn) conn.release();
+  }
+}
+
+async function GetsearchList(query) {
+  let conn, rows;
+  const stockCode = query.code;
+  try {
+    conn = await pool.getConnection();
+    console.log(query);
+    rows = await conn.query("SELECT * from Stock WHERE stockCode = ?;", stockCode);
+    conn.release();
+    return rows;
+    //console.log(rows);
+  } catch (err) {
+    throw err;
+  }
+}
+async function saveDataToDatabase(data) {
   let conn;
   try {
     conn = await pool.getConnection();
@@ -100,8 +141,9 @@ module.exports = {
   GetKeyword: GetKeyword,
   getAllStockCodes: getAllStockCodes,
   saveStatementData: saveStatementData,
+  saveDataToDatabase: saveDataToDatabase,
   getFinStat: getFinStat,
-  pool,
+  GetsearchList:GetsearchList,
+  GetsearchAll: GetsearchAll,
+  pool : pool,
 };
-
-// Statement : DB 이름

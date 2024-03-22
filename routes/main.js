@@ -44,15 +44,16 @@ router.get('/hot', function(req, res, next){
     }
     });
 })
+
 let mostExchanged = [];
 let mostIncreased = [];
 let mostViewed = [];
 
 const fetchData = async () => {
     try {
-      mostExchangedRes = await fetchMostExchanged();
-      mostIncreasedRes = await fetchMostIncreased();
-      mostViewedRes = await fetchMostViewed();
+      const mostExchangedRes = await fetchMostExchanged();
+      const mostIncreasedRes = await fetchMostIncreased();
+      const mostViewedRes = await fetchMostViewed();
       mostExchanged = mostExchangedRes.dataBody
       mostIncreased = mostIncreasedRes.dataBody
       mostViewed = mostViewedRes.dataBody.list
