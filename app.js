@@ -14,14 +14,13 @@ const finstatRouter = require("./routes/finstat");
 const newsRouter = require("./routes/news")
 const keywordRouter = require("./routes/keyword");
 const chartRouter = require("./routes/chart");
-
+const stockInfoRouter = require("./routes/stockInfo")
 var app = express();
 
 // mariaDB connect
 const maria = require("./database/connect/mariadb");
 const cron = require("node-cron"); // 스케줄링
 const { BatchStocks } = require("./utils/BatchStocks");
-
 // MariaDB 연결
 maria
   .GetDataList()
@@ -68,6 +67,7 @@ app.use("/api/finstat", finstatRouter);
 app.use("/api/news", newsRouter);
 app.use("/api/keyword", keywordRouter);
 app.use("/api/chart", chartRouter);
+app.use("/api/stockInfo", stockInfoRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

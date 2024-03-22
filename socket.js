@@ -1,35 +1,6 @@
 const { Server } = require("socket.io");
 const { WebSocket } = require("ws");
-require('dotenv').config();
-
-// 한투 웹소켓 키 발급받기
-const axios = require('axios')
-let approval_key;
-
-let data = {
-  "grant_type" : "client_credentials",
-  "appkey" : process.env.KO_INV_APP_KEY,
-  "secretkey" : process.env.KO_INV_APP_SECRET
-};
-
-let config = {
-  method: 'post',
-  maxBodyLength: Infinity,
-  url: 'https://openapi.koreainvestment.com:9443/oauth2/Approval',
-  headers: { 
-    'content-type': 'application/json; utf-8'
-  },
-  data : data
-};
-
-axios.request(config)
-.then((response) => {
-  approval_key = response.data.approval_key
-})
-.catch((error) => {
-  console.log('한투 웹소켓 키 발급 실패', error);
-});
-
+const { getWebsocketKey } = require("./utils/token/KOInvToken")
 const io = new Server({
   cors: {
     origin: "http://localhost:3000", //클라이언트 주소
@@ -37,14 +8,26 @@ const io = new Server({
   },
 })
 
+// 서버 실행시 소켓 키 발급
+let approval_key;
+const getSocketKey = async () => {
+  try {
+    approval_key = await getWebsocketKey();
+  } catch (error) {
+    console.error('에러 발생:', error);
+  }
+};
+getSocketKey();
+
 // Object와 유사한 자료구조. key:stockCode value:socketId
 const stockMap = new Map();
 
+// 디버깅용
 const printStockMap = () => {
   const stockKeys = stockMap.keys()
 
   console.log("======================")
-  console.log("stockKey 개수 : ",stockMap.size)
+  console.log("stockKey 개수 : ", stockMap.size)
   for(let i=0; i<stockMap.size; i++){
       const stockKey = stockKeys.next().value;
       console.log(stockKey, stockMap.get(stockKey))
@@ -52,6 +35,7 @@ const printStockMap = () => {
   console.log("======================")
 }
 
+// 한투에 보낼 데이터 포맷을 지정
 const sendDataFormat = (stockCode, tr_type) => {
   return JSON.stringify({
     "header": {
@@ -81,19 +65,20 @@ const formatList = () => {
 
 const REALTIME_DOMESTIC_PRICE_URL = "ws://ops.koreainvestment.com:21000/"
 
+// 한투에 연결할 socket 관련 로직이 담긴 함수. socket 개체를 반환한다.
 function connectWebSocket(){
-  const websocket = new WebSocket(REALTIME_DOMESTIC_PRICE_URL)
-
-  websocket.onopen = () => {
+  const socket = new WebSocket(REALTIME_DOMESTIC_PRICE_URL)
+  socket.onopen = () => {
     console.log("한투 소켓 연결");
     if(stockMap.size !== 0){
       formatList().forEach(format => {
-        websocket.send(format);
+        socket.send(format);
       })
     }
   }
 
-  websocket.onmessage = (result) => {
+  // 한투로부터 응답이 오면
+  socket.onmessage = (result) => {
     const { data } = result;
     if (data[0] === '0' || data[0] === '1') {
       //실시간
@@ -116,26 +101,27 @@ function connectWebSocket(){
         // res.json(data);
       } else if (trid === "PINGPONG") {
         // 실시간 데이터를 처리하지 못한 경우 PINGPONG 메시지만 주고 받음
-        websocket.close();
+        console.log(trid)
+        // socket.close();
       }
     }
   }
 
-  websocket.onclose = () => {
+  socket.onclose = () => {
     console.log("한투 연결 종료."); // 장이 끝나면 
     webSocket = connectWebSocket();
   }
   
-  websocket.onerror = (error) => {
-    console.log("에러가 발생했어요")
+  socket.onerror = (error) => {
+    console.log("에러가 발생했어요", error)
   }
 
-  return websocket;
+  return socket;
 }
 
 let webSocket = connectWebSocket();
 
-
+// 클라이언트가 구독 원할 때
 const addStockList = (stockCode, socketId) => {
   if(!stockMap.has(stockCode)){
     stockMap.set(stockCode, new Set())
@@ -144,6 +130,7 @@ const addStockList = (stockCode, socketId) => {
   stockMap.get(stockCode).add(socketId)
 }
 
+// 클라이언트가 구독 취소할 때
 const removeStockList = (stockCode, socketId) => {
     if(stockMap.has(stockCode)){
       console.log("remove : "+ stockCode)
@@ -156,27 +143,27 @@ const removeStockList = (stockCode, socketId) => {
     }
 }
 
-
+// 클라이언트 관련
 io.on("connection", (socket) => {
   const localRoomList = [];
-
+  
   socket.on('joinRoom', (stockCode) => {
     socket.join(stockCode)
     addStockList(stockCode, socket.id);
     localRoomList.push(stockCode);
-    printStockMap();
+    // printStockMap();
     console.log("room에 접속:", stockCode)
-    console.log('이후 room:', socket.rooms)
+    // console.log('이후 room:', socket.rooms)
   })
   
   socket.on('leaveRoom', (stockCode) => {
     socket.leave(stockCode); // 해당 종목 room에서 나가기
     localRoomList.pop(stockCode);
     removeStockList(stockCode, socket.id);
-    console.log("room 연결 끊김")
-    printStockMap()
+    // console.log("room 연결 끊김")
+    // printStockMap()
     console.log("room을 나감 : ", stockCode)
-    console.log('이후 room:', socket.rooms)
+    // console.log('이후 room:', socket.rooms)
   })
 
   socket.on("disconnect", () => {
@@ -184,8 +171,7 @@ io.on("connection", (socket) => {
     localRoomList.forEach(stock => {
       removeStockList(stock, socket.id);
     })
-    printStockMap()
-    console.log("프론트 소켓 연결 끊김");
+    // printStockMap()
   })
 
 })
