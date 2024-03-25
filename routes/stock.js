@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const cron = require("node-cron");
 const router = express.Router();
+require('dotenv').config()
 
 let accessToken = null;
 
@@ -10,9 +11,8 @@ const fetchAccessToken = async () => {
   const tokenUrl = "https://openapi.koreainvestment.com:9443/oauth2/tokenP";
   const body = {
     grant_type: "client_credentials",
-    appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-    appsecret:
-      "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+    appkey: process.env.KO_INV_APP_KEY,
+    appsecret: process.env.KO_INV_APP_SECRET
   };
 
   try {
@@ -69,9 +69,8 @@ router.get("/:stockCode/day", async (req, res) => {
       "Content-type": "application/json",
       authorization:
         "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImMzNDc0ZmMwLWYzNDEtNGE0MC04NjIzLWEyMzU4ZTI3NWM4NiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMTU0NjgwLCJpYXQiOjE3MTEwNjgyODAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.o_xYn7xzMGaelPtgfC7zZK_zHCvbpb1YGF5Zn_mRQIJELAUkBzbRKRvhOhdkj8dn72izv0qccK-po0bYwNFtPA",
-      appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-      appsecret:
-        "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+      appkey: process.env.KO_INV_APP_KEY,
+      appsecret: process.env.KO_INV_APP_SECRET,
       tr_id: "FHKST03010100",
     };
 
