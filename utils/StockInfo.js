@@ -37,7 +37,7 @@ async function getStockPrice(stockCode, accessToken){
     const res = { price: output.stck_prpr, ratio: output.prdy_ctrt };
     return res;
   } catch (error) {
-    console.log(error);
+    // console.log(error.response);
     throw error; // 오류를 다시 throw하여 호출 쪽에서 처리할 수 있도록 합니다.
   }
 }
@@ -48,8 +48,7 @@ async function getStockInfo(stockCode, accessToken) {
     const [stockName, stockPrice] = await Promise.all([getStockName(stockCode), getStockPrice(stockCode, accessToken)])
     return {stockName: stockName, stockPrice: stockPrice}
   } catch (error) {
-    console.error("Error in getStockInfo:", error); 
-    throw error
+    console.error("Error in getStockInfo:", error.response.data.msg1); 
   }
 }
 
