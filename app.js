@@ -15,6 +15,7 @@ const newsRouter = require("./routes/news")
 const keywordRouter = require("./routes/keyword");
 const chartRouter = require("./routes/chart");
 const stockInfoRouter = require("./routes/stockInfo")
+const flaskRouter = require("./routes/flask");
 var app = express();
 
 // mariaDB connect
@@ -68,6 +69,7 @@ app.use("/api/news", newsRouter);
 app.use("/api/keyword", keywordRouter);
 app.use("/api/chart", chartRouter);
 app.use("/api/stockInfo", stockInfoRouter)
+app.use("/api/flask", flaskRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
