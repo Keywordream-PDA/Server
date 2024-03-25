@@ -1,8 +1,9 @@
-const { json } = require('body-parser');
 const express = require('express')
 const router = express.Router()
 const trendAPI = require('google-trends-api')
 const { fetchMostExchanged, fetchMostIncreased, fetchMostViewed } = require('../utils/Shinhan')
+const { getStockPrice } = require('../utils/StockInfo')
+require('dotenv').config()
 
 router.get('/hot', function(req, res, next){
     // 한국 시간 기준으로 현재 날짜 계산
@@ -68,16 +69,24 @@ fetchData();
 // 주기적으로 데이터 갱신
 setInterval(fetchData, 60000); // 1분마다 갱신
 
-router.get('/most-exchanged', (req, res) => {
+router.get('/most-exchanged', (req, res, next) => {
   res.json(mostExchanged);
 });
 
-router.get('/most-increased', (req, res) => {
+router.get('/most-increased', (req, res, next) => {
   res.json(mostIncreased);
 });
 
-router.get('/most-viewed', (req, res) => {
+router.get('/most-viewed', (req, res, next) => {
   res.json(mostViewed);
 });
+
+router.get('/price/:stockCode', async (req, res, next) =>{
+  const stockCode = req.params.stockCode
+  const {accessToken} = require('./stockInfo')
+  const price = await getStockPrice(stockCode, accessToken)
+  // console.log(price)
+  res.json(price)
+})
 
 module.exports = router

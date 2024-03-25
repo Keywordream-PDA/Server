@@ -24,7 +24,7 @@ router.post('/list', async(req, res, next) => {
             news.newsDate = getTimeAgo(news.newsDate)
         });
         res.json(newsList);
-    } catch{
+    } catch(error){
         console.log("news의 list에서 오류")
         throw error
     }
