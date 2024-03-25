@@ -151,17 +151,22 @@ io.on("connection", (socket) => {
     socket.join(stockCode)
     addStockList(stockCode, socket.id);
     localRoomList.push(stockCode);
-    // printStockMap();
+    printStockMap();
     console.log("room에 접속:", stockCode)
     // console.log('이후 room:', socket.rooms)
   })
   
   socket.on('leaveRoom', (stockCode) => {
     socket.leave(stockCode); // 해당 종목 room에서 나가기
-    localRoomList.pop(stockCode);
+    for(let i=0; i<localRoomList.length; i++){
+      if(localRoomList[i] === stockCode){
+        localRoomList.splice(i, 1);
+        i--;
+      }
+    }
     removeStockList(stockCode, socket.id);
     // console.log("room 연결 끊김")
-    // printStockMap()
+    printStockMap()
     console.log("room을 나감 : ", stockCode)
     // console.log('이후 room:', socket.rooms)
   })
@@ -171,7 +176,7 @@ io.on("connection", (socket) => {
     localRoomList.forEach(stock => {
       removeStockList(stock, socket.id);
     })
-    // printStockMap()
+    printStockMap()
   })
 
 })
