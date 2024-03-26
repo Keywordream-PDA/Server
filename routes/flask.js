@@ -5,10 +5,10 @@ const axios = require("axios");
 const FLASK_RUL = "http://127.0.0.1:5000/api";
 
 router.post('/news', async (req, res, next) => {
-    const {name, code} = req.body
+    const {code} = req.body
     try{
         const response = await axios.post(`${FLASK_RUL}/news`, {
-            name : name,
+            // name : name,
             code : code
         })
         if(response.status === 200){
@@ -16,7 +16,7 @@ router.post('/news', async (req, res, next) => {
         }
     } catch(error) {
       console.log("flask의 news에서 오류 : "+error)
-      throw error;
+      res.status(404).send();
     }
 });
 
