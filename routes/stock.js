@@ -71,6 +71,7 @@ router.get("/:stockCode/day", async (req, res) => {
         "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjBhMDEwZmEwLWMzMDEtNDRkNS1iYThhLWMxZDc3OTZiYmM0NyIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExNTg0ODEzLCJpYXQiOjE3MTE0OTg0MTMsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.efmlzGYdYHpAfaAo_YJfJIwx6DEaJdb-p_udCFclpi-3Z7-mdSp98z_b_JpMUpoYV4jzoTHGUv3jncO5sLGeSw",
       appkey: process.env.KO_INV_APP_KEY,
       appsecret: process.env.KO_INV_APP_SECRET,
+
       tr_id: "FHKST03010100",
     };
 
