@@ -20,9 +20,13 @@ router.post('/list', async(req, res, next) => {
     const {stockCode} = req.body
     try{
         const newsList = await getNewsList(stockCode);
-        newsList.forEach(news => {
-            news.newsDate = getTimeAgo(news.newsDate)
-        });
+        if(newsList !== undefined){
+            newsList.forEach(news => {
+                news.newsDate = getTimeAgo(news.newsDate)
+            });
+        } else {
+            newsList = []
+        }
         res.json(newsList);
     } catch(error){
         console.log("news의 list에서 오류")

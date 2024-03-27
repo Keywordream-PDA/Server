@@ -89,7 +89,7 @@ function connectWebSocket(){
       for (let i = 0; i < data_cnt; i++) {
         const detail = dataList[i].split('^');
         // console.log(`${stock_code} 현재가 : ${detail[2]} 전일대비율 : ${detail[5]}`)
-        io.to(stock_code).emit("receiveStockPrice", {stockCode: stock_code, current:detail[2], ratioPrevious: detail[5]})
+        io.to(stock_code).emit("receiveStockPrice", {stockCode: stock_code, time:detail[1], current:detail[2], ratioPrevious: detail[5], key:detail[13]})
       }
     } else {
       const jsonObject = JSON.parse(data)
@@ -151,17 +151,22 @@ io.on("connection", (socket) => {
     socket.join(stockCode)
     addStockList(stockCode, socket.id);
     localRoomList.push(stockCode);
-    // printStockMap();
+    printStockMap();
     console.log("room에 접속:", stockCode)
     // console.log('이후 room:', socket.rooms)
   })
   
   socket.on('leaveRoom', (stockCode) => {
     socket.leave(stockCode); // 해당 종목 room에서 나가기
-    localRoomList.pop(stockCode);
+    for(let i=0; i<localRoomList.length; i++){
+      if(localRoomList[i] === stockCode){
+        localRoomList.splice(i, 1);
+        i--;
+      }
+    }
     removeStockList(stockCode, socket.id);
     // console.log("room 연결 끊김")
-    // printStockMap()
+    printStockMap()
     console.log("room을 나감 : ", stockCode)
     // console.log('이후 room:', socket.rooms)
   })
@@ -171,7 +176,7 @@ io.on("connection", (socket) => {
     localRoomList.forEach(stock => {
       removeStockList(stock, socket.id);
     })
-    // printStockMap()
+    printStockMap()
   })
 
 })

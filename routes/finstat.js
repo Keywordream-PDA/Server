@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 const mariadb = require("../database/connect/mariadb");
+require('dotenv').config()
 
 router.get("/:stockCode/info", async (req, res) => {
   const stockCode = req.params.stockCode;
@@ -82,9 +83,8 @@ router.get("/:stockCode/info", async (req, res) => {
 //   const headers = {
 //     authorization:
 //       "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6ImMzNDc0ZmMwLWYzNDEtNGE0MC04NjIzLWEyMzU4ZTI3NWM4NiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMTU0NjgwLCJpYXQiOjE3MTEwNjgyODAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.o_xYn7xzMGaelPtgfC7zZK_zHCvbpb1YGF5Zn_mRQIJELAUkBzbRKRvhOhdkj8dn72izv0qccK-po0bYwNFtPA",
-//     appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-//     appsecret:
-//       "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+//     appkey: process.env.KO_INV_APP_KEY,
+//     appsecret: process.env.KO_INV_APP_SECRET,
 //     tr_id: "FHKST66430500",
 //     custtype: "P",
 //   };
@@ -125,12 +125,10 @@ module.exports = router;
 //     });
 
 //     const headers1 = {
-//       authorization:y
-
+//       authorization:
 //         "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjZkNzg5ODJkLTIxNDktNDQ0My1hZGUwLTRjZmE1NDFmNjEwMCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMDYyNTQwLCJpYXQiOjE3MTA5NzYxNDAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.VD-yqE-OsWwxXsmDUeWrWlESk8QdfimXUxokolBhQEpW0fxAZdF1GxGoq8N2umCzYceMkcknCfyA79cAuWMDBQ",
-//       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-//       appsecret:
-//         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+//       appkey: process.env.KO_INV_APP_KEY,
+//       appsecret: process.env.KO_INV_APP_SECRET,
 //       tr_id: "FHKST01010100",
 //     };
 
@@ -157,9 +155,8 @@ module.exports = router;
 //       "content-type": "application/json; charset=utf-8",
 //       authorization:
 //         "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjZkNzg5ODJkLTIxNDktNDQ0My1hZGUwLTRjZmE1NDFmNjEwMCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMDYyNTQwLCJpYXQiOjE3MTA5NzYxNDAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.VD-yqE-OsWwxXsmDUeWrWlESk8QdfimXUxokolBhQEpW0fxAZdF1GxGoq8N2umCzYceMkcknCfyA79cAuWMDBQs",
-//       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-//       appsecret:
-//         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+//       appkey: process.env.KO_INV_APP_KEY,
+//       appsecret: process.env.KO_INV_APP_SECRET,
 //       tr_id: "FHKST66430200",
 //       custtype: "P",
 //     };
@@ -186,9 +183,8 @@ module.exports = router;
 //       "content-type": "application/json; charset=utf-8",
 //       authorization:
 //         "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjZkNzg5ODJkLTIxNDktNDQ0My1hZGUwLTRjZmE1NDFmNjEwMCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMDYyNTQwLCJpYXQiOjE3MTA5NzYxNDAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.VD-yqE-OsWwxXsmDUeWrWlESk8QdfimXUxokolBhQEpW0fxAZdF1GxGoq8N2umCzYceMkcknCfyA79cAuWMDBQ",
-//       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-//       appsecret:
-//         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+//       appkey: process.env.KO_INV_APP_KEY,
+//       appsecret: process.env.KO_INV_APP_SECRET,
 //       tr_id: "FHKST66430300",
 //       custtype: "P",
 //     };
@@ -224,9 +220,8 @@ module.exports = router;
 //       "content-type": "application/json; charset=utf-8",
 //       authorization:
 //         "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjZkNzg5ODJkLTIxNDktNDQ0My1hZGUwLTRjZmE1NDFmNjEwMCIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExMDYyNTQwLCJpYXQiOjE3MTA5NzYxNDAsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.VD-yqE-OsWwxXsmDUeWrWlESk8QdfimXUxokolBhQEpW0fxAZdF1GxGoq8N2umCzYceMkcknCfyA79cAuWMDBQ",
-//       appkey: "PSzo0xRNAXE6XyA5OJdkmSJIYwuVUGgSHg2l",
-//       appsecret:
-//         "HFPFfK5VyqCgIHgitad9JFcSlUWhEOmiTD2MOTYIt9jlrj/KxKGz/kU3z2kGcmO/vtxHvMPLHtIAi7j4r+TEhBHNzYI9xv/fd6n/h5E6Mrm3k4lVQeSNygL+W/w206htErKXKkUsz2CCI3UcD9xQMHDfsS+5LZy2JeZCK9gvnAAJNGOFNug=",
+//       appkey: process.env.KO_INV_APP_KEY,
+//       appsecret: process.env.KO_INV_APP_SECRET,
 //       tr_id: "FHKST66430500",
 //       custtype: "P",
 //     };
