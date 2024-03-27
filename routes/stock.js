@@ -2,9 +2,10 @@ const express = require("express");
 const axios = require("axios");
 const cron = require("node-cron");
 const router = express.Router();
+let { accessToken } = require('./stockInfo')
 require('dotenv').config()
 
-let accessToken = null;
+// let accessToken = null;
 
 // Function to fetch access token
 const fetchAccessToken = async () => {
@@ -68,7 +69,7 @@ router.get("/:stockCode/day", async (req, res) => {
     const headers = {
       "Content-type": "application/json",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjFlZDMxY2YwLTExOTgtNDg0MC04MWI2LWIzM2VhOWIzZTIzYyIsImlzcyI6InVub2d3IiwiZXhwIjoxNzExNDk0MjQzLCJpYXQiOjE3MTE0MDc4NDMsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.XHV3KkfOe5TRgUgyFEbbtvLWItFE25jymRrUFUtkqaIwHL9tMpP-wxLJ9C29jiOqIRan3RAR8JN7qNuZCFqdxA",
+        `Bearer ${accessToken}`,
       appkey: process.env.KO_INV_APP_KEY,
       appsecret: process.env.KO_INV_APP_SECRET,
       tr_id: "FHKST03010100",
