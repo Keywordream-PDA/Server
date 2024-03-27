@@ -19,7 +19,7 @@ router.post('/tags', async (req, res, next) => {
 router.post('/list', async(req, res, next) => {
     const {stockCode} = req.body
     try{
-        const newsList = await getNewsList(stockCode);
+        let newsList = await getNewsList(stockCode);
         if(newsList !== undefined){
             newsList.forEach(news => {
                 news.newsDate = getTimeAgo(news.newsDate)
