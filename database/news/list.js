@@ -4,17 +4,23 @@ const getNewsList = async (stockCode) => {
   let conn, rows
   try {
     conn = await pool.getConnection();
+    const newsIds = await conn.query(`
+      SELECT newsIds
+      FROM NewsStock
+      WHERE stockCode = ${stockCode}
+    `)
     rows = await conn.query(
         `SELECT newsId, title, press, newsDate, imgUrl
             FROM News 
-            WHERE stockCode = ${stockCode}
+            WHERE newsId in (${newsIds[0]["newsIds"].join(", ")})
             ORDER BY newsDate DESC
-            LIMIT 20;`
+        ;`
     );
   } catch (err) {
     throw err;
   } finally {
     if (conn) conn.release();
+    // console.log(rows);
     return rows;
   }
 }
