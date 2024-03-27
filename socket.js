@@ -89,7 +89,7 @@ function connectWebSocket(){
       for (let i = 0; i < data_cnt; i++) {
         const detail = dataList[i].split('^');
         // console.log(`${stock_code} 현재가 : ${detail[2]} 전일대비율 : ${detail[5]}`)
-        io.to(stock_code).emit("receiveStockPrice", {stockCode: stock_code, current:detail[2], ratioPrevious: detail[5]})
+        io.to(stock_code).emit("receiveStockPrice", {stockCode: stock_code, time:detail[1], current:detail[2], ratioPrevious: detail[5], key:detail[13]})
       }
     } else {
       const jsonObject = JSON.parse(data)
