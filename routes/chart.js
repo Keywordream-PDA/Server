@@ -61,10 +61,62 @@ async function fetchTodayChart(stockCode) {
     },
   };
 
+  // TODO
+  // 현재 시각 이후의 데이터 포인트
+  const fillDataUntilMarketClose = (
+    currentTimeInMinutes,
+    marketCloseTimeInMinutes
+  ) => {
+    const result = [];
+    let time = currentTimeInMinutes;
+
+    while (time < marketCloseTimeInMinutes) {
+      const hour = Math.floor(time / 60);
+      const minute = time % 60;
+      const timeString = `${hour.toString().padStart(2, "0")}${minute
+        .toString()
+        .padStart(2, "0")}00`;
+
+      result.push({
+        date: `${chartDate}`,
+        time: timeString,
+        open: null,
+        high: null,
+        low: null,
+        close: null,
+        jdiff_vol: null,
+        value: null,
+        jongchk: null,
+        rate: null,
+        sign: null,
+      });
+
+      time += 3;
+    }
+
+    return result;
+  };
+
+  // 현재 시각 이후의 데이터는 빈 값으로 채우기
+  const currentHour = date.getHours();
+  const currentMinute = date.getMinutes();
+  const currentTimeInMinutes = currentHour * 60 + currentMinute;
+  const marketCloseTimeInMinutes = 15 * 60 + 30; // 15:30을 분으로 환산
+
   try {
     const response = await axios(chartConfig);
-    console.log(response.data);
-    return response.data;
+    let data = response.data;
+
+    // 기존 데이터에 현재 시각 이후의 데이터 포인트 추가
+    if (currentTimeInMinutes < marketCloseTimeInMinutes) {
+      const additionalData = fillDataUntilMarketClose(
+        currentTimeInMinutes,
+        marketCloseTimeInMinutes
+      );
+      data.t8412OutBlock1 = [...data.t8412OutBlock1, ...additionalData];
+    }
+
+    return data;
   } catch (error) {
     console.error("Error in fetchTodayChart:", error);
     throw error;
@@ -76,6 +128,7 @@ router.get("/:stockCode", async function (req, res, next) {
   try {
     const stockCode = req.params.stockCode;
     const todayChartData = await fetchTodayChart(stockCode);
+
     res.json(todayChartData);
   } catch (error) {
     console.error("Error fetching chart api:", error);
