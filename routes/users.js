@@ -22,4 +22,24 @@ router.post("/login", async function (req, res, next) {
   }
 });
 
+// 전체 회원 조회
+router.get("/all", async function (req, res, next){
+    let conn;
+    const { pool } = require("../database/connect/mariadb.js");
+    try {   
+        conn = await pool.getConnection();
+
+        const query = `
+            SELECT * FROM User;`;
+
+        const rows = await conn.query(query);
+        res.json(rows);
+    } catch(error) {
+        console.error('Error:', error);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    } finally {
+        if (conn) conn.release();
+    }
+});
+
 module.exports = router;

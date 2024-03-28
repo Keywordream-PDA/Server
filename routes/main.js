@@ -60,7 +60,7 @@ router.get("/hot", function (req, res, next) {
           ) {
             const day = jsonData.default.trendingSearchesDays[i];
             if (day.trendingSearches && day.trendingSearches.length > 0) {
-              let limit = 3;
+              let limit = 3 - trendingSearches.length;
               if (i === 0 && day.trendingSearches.length < 3) {
                 limit = day.trendingSearches.length;
               }
