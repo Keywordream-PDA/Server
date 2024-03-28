@@ -1,6 +1,14 @@
 const { Server } = require("socket.io");
 const { WebSocket } = require("ws");
 const { getWebsocketKey } = require("./utils/token/KOInvToken")
+const cron = require("node-cron");
+const { isOpenSocket } = require("./utils/MarketOpen");
+
+// 오전 8시 55분에 한투 웹소켓에 연결
+cron.schedule('55 8 * * *', () => {
+  webSocket = connectWebSocket();
+})
+
 const io = new Server({
   cors: {
     origin: "http://localhost:3000", //클라이언트 주소
@@ -101,15 +109,19 @@ function connectWebSocket(){
         // res.json(data);
       } else if (trid === "PINGPONG") {
         // 실시간 데이터를 처리하지 못한 경우 PINGPONG 메시지만 주고 받음
-        console.log(trid)
-        // socket.close();
+        console.log("실시간 데이터 못 받아옴")
+        if(!isOpenSocket()){
+          socket.close();
+        }
       }
     }
   }
 
   socket.onclose = () => {
-    console.log("한투 연결 종료."); // 장이 끝나면 
-    webSocket = connectWebSocket();
+    console.log("한투 연결 종료.");
+    if(isOpenSocket()){
+      webSocket = connectWebSocket();
+    }
   }
   
   socket.onerror = (error) => {
@@ -152,8 +164,7 @@ io.on("connection", (socket) => {
     addStockList(stockCode, socket.id);
     localRoomList.push(stockCode);
     printStockMap();
-    console.log("room에 접속:", stockCode)
-    // console.log('이후 room:', socket.rooms)
+    // console.log("room에 접속:", stockCode)
   })
   
   socket.on('leaveRoom', (stockCode) => {
