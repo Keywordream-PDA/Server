@@ -11,11 +11,11 @@ const searchRouter = require("./routes/search");
 const stockRouter = require("./routes/stock");
 const mainRouter = require("./routes/main");
 const finstatRouter = require("./routes/finstat");
-const newsRouter = require("./routes/news")
+const newsRouter = require("./routes/news");
 const keywordRouter = require("./routes/keyword");
 const chartRouter = require("./routes/chart");
 const flaskRouter = require("./routes/flask");
-const {infoRouter} = require("./routes/stockInfo");
+const { infoRouter } = require("./routes/stockInfo");
 const mypageRouter = require("./routes/mypage");
 var app = express();
 
