@@ -69,7 +69,7 @@ router.get("/:stockCode/day", async (req, res) => {
     const headers = {
       "Content-type": "application/json",
       authorization:
-        `Bearer ${accessToken}`,
+        accessToken,
       appkey: process.env.KO_INV_APP_KEY,
       appsecret: process.env.KO_INV_APP_SECRET,
 
