@@ -29,7 +29,39 @@ const getTimeDetail = (newsDate) => {
     return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
 }
 
+const getTodayDay = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    month = month < 10 ? '0' + month : month;
+    let day = today.getDate();
+    day = day < 10 ? '0' + day : day;
+    return `${year}${month}${day}`
+}
+
+const isOpenMarketTime = () => {
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+
+    // 시작 시간과 종료 시간 설정
+    const startHour = 8;
+    const startMinute = 55;
+    const endHour = 15;
+    const endMinute = 35;
+
+    // 현재 시간이 시작 시간보다 늦거나 같고 종료 시간보다 이른 경우에는 범위 내에 있다고 판단
+    if ((hour > startHour || (hour === startHour && minute >= startMinute)) &&
+        (hour < endHour || (hour === endHour && minute <= endMinute))) {
+        return true
+    } else {
+        return false
+    }
+}
+
 module.exports = {
     getTimeAgo : getTimeAgo,
-    getTimeDetail : getTimeDetail
+    getTimeDetail : getTimeDetail,
+    getTodayDay : getTodayDay,
+    isOpenMarketTime : isOpenMarketTime
 }

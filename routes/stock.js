@@ -13,7 +13,7 @@ const fetchAccessToken = async () => {
   const body = {
     grant_type: "client_credentials",
     appkey: process.env.KO_INV_APP_KEY,
-    appsecret: process.env.KO_INV_APP_SECRET
+    appsecret: process.env.KO_INV_APP_SECRET,
   };
 
   try {
@@ -72,6 +72,7 @@ router.get("/:stockCode/day", async (req, res) => {
         `Bearer ${accessToken}`,
       appkey: process.env.KO_INV_APP_KEY,
       appsecret: process.env.KO_INV_APP_SECRET,
+
       tr_id: "FHKST03010100",
     };
 

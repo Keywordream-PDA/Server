@@ -1,5 +1,5 @@
 const express = require('express');
-const getNewsList = require('../database/news/list');
+const {getNewsList, getKeywordNewsList} = require('../database/news/list');
 const {getTimeAgo, getTimeDetail} = require('../utils/time');
 const getNewsDetail = require('../database/news/detail');
 const getTagTop3 = require('../database/news/tag');
@@ -19,10 +19,37 @@ router.post('/tags', async (req, res, next) => {
 router.post('/list', async(req, res, next) => {
     const {stockCode} = req.body
     try{
-        const newsList = await getNewsList(stockCode);
-        newsList.forEach(news => {
-            news.newsDate = getTimeAgo(news.newsDate)
-        });
+        let newsList = await getNewsList(stockCode);
+        if(newsList !== undefined){
+            newsList.forEach(news => {
+                news.newsDate = getTimeAgo(news.newsDate)
+            });
+        } else {
+            newsList = []
+        }
+        res.json(newsList);
+    } catch(error){
+        console.log("news의 list에서 오류")
+        throw error
+    }
+})
+
+router.post('/keywordList', async(req, res, next) => {
+    const {keyword, stockCode} = req.body;
+    try{
+        let newsList = await getKeywordNewsList(stockCode);
+        if(newsList !== undefined){
+            newsList = newsList.filter(news => {
+                if(news.content.includes(keyword)){
+                    news.newsDate = getTimeAgo(news.newsDate)
+                    delete news.content
+                    return true
+                }
+                return false
+            })
+        } else {
+            newsList = []
+        }
         res.json(newsList);
     } catch(error){
         console.log("news의 list에서 오류")

@@ -1,9 +1,9 @@
 var express = require("express");
 var infoRouter = express.Router();
 const { getStockInfo } = require("../utils/StockInfo");
-const { getAccessToken } = require("../utils/token/KOInvToken")
+const { getAccessToken } = require("../utils/token/KOInvToken");
 // 서버 실행시 access token 발급
-let accessToken = '';
+let accessToken = "";
 
 const getToken = async () => {
   try {
@@ -13,15 +13,18 @@ const getToken = async () => {
 
   }
 };
+
 getToken();
 
-infoRouter.get('/:stockCode', async function (req, res, next) {
-    const stockCode = req.params.stockCode;
-    getStockInfo(stockCode, accessToken).then((infoObj) => {
-        res.json(infoObj);
-    }).catch((err) => {
-        console.log("DB Connection Failed:", err);
+infoRouter.get("/:stockCode", async function (req, res, next) {
+  const stockCode = req.params.stockCode;
+  getStockInfo(stockCode, accessToken)
+    .then((infoObj) => {
+      res.json(infoObj);
+    })
+    .catch((err) => {
+      console.log("DB Connection Failed:", err);
     });
 });
 
-module.exports = {infoRouter, accessToken};
+module.exports = { infoRouter, accessToken };

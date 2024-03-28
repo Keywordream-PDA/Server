@@ -45,7 +45,7 @@ async function GetsearchAll() {
   try {
     conn = await pool.getConnection();
     //console.log(conn);
-    rows = await conn.query("SELECT * from Stock ORDER BY name;");
+    rows = await conn.query("SELECT * from Stock;");
     conn.release();
     return rows;
     //console.log(rows);
