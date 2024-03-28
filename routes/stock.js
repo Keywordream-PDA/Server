@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const cron = require("node-cron");
 const router = express.Router();
-require('dotenv').config()
+require("dotenv").config();
 
 let accessToken = null;
 
@@ -12,7 +12,7 @@ const fetchAccessToken = async () => {
   const body = {
     grant_type: "client_credentials",
     appkey: process.env.KO_INV_APP_KEY,
-    appsecret: process.env.KO_INV_APP_SECRET
+    appsecret: process.env.KO_INV_APP_SECRET,
   };
 
   try {
