@@ -15,7 +15,6 @@ async function getMyStocks(nickName) {
       WHERE u.name = ?;`;
 
     const rows = await conn.query(query, [nickName]);
-    console.log(rows)
     return rows;
   } catch (error) {
     throw error;
@@ -42,7 +41,6 @@ async function addMyStock(nickName, stockCode) {
     // 주식 정보 추가
     const insertQuery = `INSERT INTO Mystock (stockCode, userId) VALUES (?, ?);`;
     const res = await conn.query(insertQuery, [stockCode, userId]);
-    console.log(res)
     return "Stock added successfully.";
   } catch (error) {
     throw error;
