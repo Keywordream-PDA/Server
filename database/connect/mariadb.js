@@ -72,7 +72,6 @@ async function GetsearchList(query) {
   const stockCode = query.code;
   try {
     conn = await pool.getConnection();
-    console.log(query);
     rows = await conn.query(
       "SELECT * from Stock WHERE stockCode = ?;",
       stockCode

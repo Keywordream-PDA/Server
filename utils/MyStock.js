@@ -15,7 +15,6 @@ async function getMyStocks(nickName) {
       WHERE u.name = ?;`;
 
     const rows = await conn.query(query, [nickName]);
-    console.log(rows)
     return rows;
   } catch (error) {
     throw error;
@@ -42,7 +41,6 @@ async function addMyStock(nickName, stockCode) {
     // 주식 정보 추가
     const insertQuery = `INSERT INTO Mystock (stockCode, userId) VALUES (?, ?);`;
     const res = await conn.query(insertQuery, [stockCode, userId]);
-    console.log(res)
     return "Stock added successfully.";
   } catch (error) {
     throw error;
@@ -56,7 +54,6 @@ async function deleteMyStock(nickName, stockCode) {
     let conn;
     try {
       conn = await pool.getConnection();
-      console.log(nickName, stockCode)
       // 사용자 ID 가져오기
       const getUserIdQuery = `SELECT userId FROM User WHERE name = ?;`;
       const userRow = await conn.query(getUserIdQuery, [nickName]);
