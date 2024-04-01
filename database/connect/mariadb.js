@@ -15,7 +15,7 @@ async function GetDataList() {
   try {
     conn = await pool.getConnection();
     //console.log(conn);
-    rows = await conn.query("SELECT * from user;");
+    rows = await conn.query("SELECT * from User;");
     conn.release();
     return rows;
     //console.log(rows);
