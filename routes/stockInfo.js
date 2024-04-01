@@ -9,9 +9,10 @@ let accessToken = "";
 // 서버 실행시마다 access token 발급
 const getToken = async () => {
   try {
-    accessToken = `Bearer ${await getAccessToken()}`;
-    console.log('한투토큰 가져옴')
-    // accessToken = 'Bearer eyJ0eXAi...'
+    // const data = await getAccessToken()
+    // accessToken = 'Bearer ' + data
+    // console.log('한투토큰 가져옴', accessToken)
+    accessToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjExYTk3YTgxLWVjMmUtNDZhZC05ZmNhLTFjYjliMTVmZjExZiIsImlzcyI6InVub2d3IiwiZXhwIjoxNzEyMDk4NjYyLCJpYXQiOjE3MTIwMTIyNjIsImp0aSI6IlBTem8weFJOQVhFNlh5QTVPSmRrbVNKSVl3dVZVR2dTSGcybCJ9.7dlAlSAKsUtb5CHUu7MF48LcyjXiByccB5oGpRETttfrXjhDZpMw9DKkrJAiYLrcBWaQ9xC2shQKv_eEIwGLyw'
   } catch {
   }
 };
