@@ -40,14 +40,44 @@ async function GetKeyword(stockCode) {
     throw err;
   }
 }
-async function GetsearchAll() {
+async function GetsearchAll(pageNumber) {
+  const pageSize = 50;
   let conn, rows;
   try {
     conn = await pool.getConnection();
+    const offset = pageNumber * pageSize
     //console.log(conn);
-    rows = await conn.query("SELECT * from Stock;");
+    rows = await conn.query(`SELECT * from Stock LIMIT ${pageSize} OFFSET ${offset};`);
     conn.release();
     return rows;
+    //console.log(rows);
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function getSearchCount(query){
+  let conn, rows;
+  const stockCode = query.code;
+  const stockName = query.name;
+  try {
+    conn = await pool.getConnection();
+    if(stockCode){
+      rows = await conn.query(
+        `SELECT COUNT(*) from Stock WHERE stockCode LIKE '%${stockCode}%';`
+      );
+    } else if(stockName) {
+      rows = await conn.query(
+        `SELECT COUNT(*) from Stock WHERE name LIKE '%${stockName}%';`
+      );
+    } else {
+      rows = await conn.query(
+        `SELECT COUNT(*) FROM Stock;`
+      );
+    }
+    conn.release();
+    const countResult = rows[0];
+    return countResult['COUNT(*)'].toString();
     //console.log(rows);
   } catch (err) {
     throw err;
@@ -58,7 +88,8 @@ async function getAllStockCodes() {
   let conn;
   try {
     conn = await pool.getConnection();
-    rows = await conn.query("SELECT stockCode FROM Stock;");
+    console.log(offset);
+    rows = await conn.query(`SELECT stockCode FROM Stock`);
     return rows;
   } catch (error) {
     throw error;
@@ -67,15 +98,29 @@ async function getAllStockCodes() {
   }
 }
 
-async function GetsearchList(query) {
+async function GetsearchList(query, pageNumber) {
+  const pageSize = 50;
+  const offset = pageNumber * pageSize
   let conn, rows;
   const stockCode = query.code;
+  const stockName = query.name;
   try {
     conn = await pool.getConnection();
-    rows = await conn.query(
-      "SELECT * from Stock WHERE stockCode = ?;",
-      stockCode
-    );
+    if(stockCode){
+      console.log("stockCode : " + stockCode);
+      rows = await conn.query(
+        `SELECT * from Stock WHERE stockCode LIKE '%${stockCode}%' LIMIT ${pageSize} OFFSET ${offset};`
+      );
+    } else if(stockName) {
+      console.log("stockName : " + stockName);
+      rows = await conn.query(
+        `SELECT * from Stock WHERE name LIKE '%${stockName}%' LIMIT ${pageSize} OFFSET ${offset};`
+      );
+    } else {
+      rows = await conn.query(
+        `SELECT * FROM Stock LIMIT ${pageSize} OFFSET ${offset};`
+      );
+    }
     conn.release();
     return rows;
     //console.log(rows);
@@ -146,5 +191,6 @@ module.exports = {
   getFinStat: getFinStat,
   GetsearchList: GetsearchList,
   GetsearchAll: GetsearchAll,
+  getSearchCount:getSearchCount,
   pool: pool,
 };
