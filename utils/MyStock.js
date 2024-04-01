@@ -54,7 +54,6 @@ async function deleteMyStock(nickName, stockCode) {
     let conn;
     try {
       conn = await pool.getConnection();
-      console.log(nickName, stockCode)
       // 사용자 ID 가져오기
       const getUserIdQuery = `SELECT userId FROM User WHERE name = ?;`;
       const userRow = await conn.query(getUserIdQuery, [nickName]);

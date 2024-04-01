@@ -11,12 +11,11 @@ router.get("/:stockCode/info", async (req, res) => {
     if (rows.length > 0) {
       // 가져온 데이터를 그대로 클라이언트에 반환
       res.json(rows);
-      console.log("Data retrieved successfully:", rows);
     } else {
       res
         .status(404)
         .json({ error: "Data not found for the given stock code" });
-      console.log("Data not found for stock code:", stockCode);
+      console.log("재무제표 존재하지 않음", stockCode);
     }
   } catch (err) {
     console.error("DB Connection Failed:", err);
