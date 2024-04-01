@@ -32,7 +32,6 @@ router.get('/', async function (req, res, next) {
           // 이름 부분 검색을 위해 정규 표현식 사용
           query.name = name;
         }
-        console.log(query);
         maria.GetsearchList(query).then((rows)=>{
             res.json(rows);
         }).catch((err)=>{

@@ -9,7 +9,7 @@ router.get('/:stockCode', async function (req, res, next) {
     maria.GetKeyword(stockCode).then((rows) => {
         const result = rows[0].data;
         res.json(result);
-        console.log(result);
+        // console.log(result);
     }).catch((err) => {
         console.log("DB Connection Failed:", err);
     });
