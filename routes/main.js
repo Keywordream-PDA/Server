@@ -23,9 +23,9 @@ const fetchData = async () => {
     mostExchanged = mostExchangedRes.dataBody;
     mostIncreased = mostIncreasedRes.dataBody;
     mostViewed = mostViewedRes.dataBody.list;
-    console.log("Data updated successfully.");
+    console.log("신투 인기종목 업데이트");
   } catch (error) {
-    console.error("Error updating data:", error);
+    console.error("신투 인기종목 업데이트 실패", error);
   }
 };
 

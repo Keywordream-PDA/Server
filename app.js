@@ -27,27 +27,27 @@ const { BatchStocks } = require("./utils/BatchStocks");
 maria
   .GetDataList()
   .then((rows) => {
-    console.log("DB Connection Successful");
+    console.log("DB 연결");
 
     // Stock 배치 1) 서버 시작하는 경우
     // BatchStocks();
     // console.log("배치 완료");
 
-    // Stock 배치 2) 매일 오전 8시
-    // cron.schedule(
-    //   "0 8 * * *",
-    //   () => {
-    //     console.log("Stock Table Batch Successful");
-    //     BatchStocks();
-    //   },
-    //   {
-    //     scheduled: true,
-    //     timezone: "Asia/Seoul",
-    //   }
-    // );
+    // Stock 배치 2) 매일 오전 6시
+    cron.schedule(
+      "0 6 * * *",
+      () => {
+        console.log("종목 정보 Batch 완료");
+        BatchStocks();
+      },
+      {
+        scheduled: true,
+        timezone: "Asia/Seoul",
+      }
+    );
   })
   .catch((err) => {
-    console.log("DB Connection Failed:", err);
+    console.log("DB 연결 실패", err);
   });
 
 // view engine setup

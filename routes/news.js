@@ -74,7 +74,7 @@ const applyKeywordToContent = async (content, stockCode) => {
     try {
         const tagTop3 = await getTagTop3(stockCode);
         console.log(tagTop3)
-        console.log(typeof content)
+        // console.log(typeof content)
         tagTop3.forEach(tag => {
             const regex = new RegExp(tag, "g");
             content = content.replace(regex, `<span style="background-color: #e2e8ff">${tag}</span>`);

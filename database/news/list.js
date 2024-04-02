@@ -20,7 +20,6 @@ const getNewsList = async (stockCode) => {
     throw err;
   } finally {
     if (conn) conn.release();
-    // console.log(rows);
     return rows;
   }
 }

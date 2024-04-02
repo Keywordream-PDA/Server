@@ -114,7 +114,6 @@ function connectWebSocket() {
     } else {
       const jsonObject = JSON.parse(data);
       const trid = jsonObject["header"]["tr_id"];
-      // console.log(jsonObject)
       if (trid !== "PINGPONG") {
         // 어떠한 처리
         console.log(jsonObject.body.msg1);
@@ -137,7 +136,7 @@ function connectWebSocket() {
   };
 
   socket.onerror = (error) => {
-    console.log("에러가 발생했어요", error);
+    console.log("소켓에러발생", error);
   };
 
   return socket;
@@ -157,7 +156,7 @@ const addStockList = (stockCode, socketId) => {
 // 클라이언트가 구독 취소할 때
 const removeStockList = (stockCode, socketId) => {
   if (stockMap.has(stockCode)) {
-    console.log("remove : " + stockCode);
+    // console.log("remove : " + stockCode);
     stockMap.get(stockCode).delete(socketId);
 
     if (stockMap.get(stockCode).size === 0) {
